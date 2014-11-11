@@ -60,8 +60,8 @@
 		require 'conn.php';
 		global $app;//网页中输入框name为userid、password
 		$req = $app->request(); 
-	    $xuserId = $req->params('userId'); 
-	    $xpassword = $req->params('password'); 
+	    $xuserId = $_POST['userId']; 
+	    $xpassword = $_POST['password']; 
 		verify($xuserId,$xpassword)?found():error('verify_error');
 		mysql_close($con);
 	});
@@ -71,10 +71,10 @@
 		require 'conn.php';
 		global $app;//
 		$req = $app->request(); 
-	    $xuserId = $req->params('userId'); 
+	    $xuserId = $_POST['userId']; 
 	    $xuserName=$_POST['userName']; //由于Slim中post不支持中文值得使用原始$_POST方法
-	    $xpassword = $req->params('password');
-	    $xrepassword = $req->params('rePassword');
+	    $xpassword = $_POST['password'];
+	    $xrepassword = $_POST['rePassword'];
 		if($xpassword!=$xrepassword) 
 			error('password_error');//确定password是否等于repassword
 		else{
@@ -157,8 +157,8 @@
 		require 'conn.php';
 		global $app;
 		$req = $app->request(); 
-	    $xuserId = $req->params('userId'); 
-	    $xpassword = $req->params('password');
+	    $xuserId = $_POST['userId']; 
+	    $xpassword = $_POST['password'];
 		rank_verify_json($xuserId,$xpassword);
 		mysql_close($con);
 	});
@@ -225,9 +225,9 @@
 	    $book_name = $_POST['bookName'];
 	    $book_author = $_POST['bookAuthor'];
 	    $book_type = $_POST['bookType'];
-	    $act_id = $req->params('actId');
+	    $act_id = $_POST['actId'];
 	    $book_info= $_POST['bookInfo'];
-	    $book_price = $req->params('bookPrice');
+	    $book_price = $_POST['bookPrice'];
 	    //$book_status = $_POST['bookstatus'];
 		rank_verify_bool($xuserId,$xpassword)?add($book_name,$book_author,$book_type,$act_id,$book_info,$book_price):error('rankverify_error');
 		mysql_close($con);
@@ -324,7 +324,7 @@
 	}
 
 	//查看曾借过的书
-	function usershow($userId){
+	function usershow($userId){//增加显示借阅时间、剩余时间
 		$sql="SELECT ba.id as id,book_name, book_author, book_type, book_info, book_price, CASE updated_at WHEN '0000-00-00' THEN '未还' ELSE '已还' END AS book_status, favour, book_pic FROM bookcirculate cir, bookbasic ba, bookdetail de WHERE cir.book_id = ba.id AND cir.user_id = $userId AND de.book_id = ba.id";
 		//echo $sql;
 		$query = mysql_query($sql);
@@ -353,7 +353,7 @@
 	}
 
 	//查看已借出的书
-	function adminshow($page_size,$offset){
+	function adminshow($page_size,$offset){//增加显示借阅人、借书时间、到期时间（30天）
 		$sql="SELECT ba.id as id,book_name, book_author, book_type, book_info, book_price, book_status, favour, book_pic FROM bookbasic ba,bookdetail de WHERE ba.id=de.book_id and book_status='已被借' LIMIT $page_size OFFSET $offset ";
 		//echo $sql;
 		$query = mysql_query($sql);
