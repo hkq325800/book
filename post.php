@@ -10,8 +10,8 @@ if($_POST){
 } else{
  ?>
 ADD RECORD.
-<!-- <form action="http://www.flappyant.com/book/API.php/administrator/addBook/12108238/123" method="post"> -->
-<form action="http://localhost/webservice/book/API.php/administrator/addBook/12108238/123" method="post">
+<form action="http://www.flappyant.com/book/API.php/administrator/addBook/12108238/123" method="post">
+<!-- <form action="http://localhost/webservice/book/API.php/administrator/addBook/12108238/123" method="post"> -->
 <input type="text" name="bookName" placeholder="bookName" /><br>
 <input type="text" name="bookAuthor" placeholder="bookAuthor" /><br>
 <input type="text" name="bookType" placeholder="bookType" /><br>

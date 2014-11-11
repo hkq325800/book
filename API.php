@@ -261,7 +261,7 @@
 	//用于搜索与获取图书列表
 	function search($flag,$xtype,$page_size,$offset,$xkeyword){
 		$where="";
-		$sql="select book_name,book_author,book_type,book_info,book_price,book_status,favour,
+		$sql="select basic.id as id,book_name,book_author,book_type,book_info,book_price,book_status,favour,
 	book_pic from bookbasic basic join bookdetail detail on basic.id=detail.book_id ";
 		$turn=" LIMIT $page_size OFFSET $offset ";
 		if(!$flag){//1管理员0用户
@@ -280,7 +280,8 @@
 		else {
 			$i = 0;
 			while($res = mysql_fetch_array($query)) {
-				$response[$i] = array(  'book_name'=>$res['book_name'],
+				$response[$i] = array(  'book_id'=>$res['id'],
+										'book_name'=>$res['book_name'],
 										'book_author'=>$res['book_author'],
 										'book_type'=>$res['book_type'],
 										'book_info'=>$res['book_info'],
@@ -324,7 +325,7 @@
 
 	//查看曾借过的书
 	function usershow($userId){
-		$sql="SELECT book_name, book_author, book_type, book_info, book_price, CASE updated_at WHEN '0000-00-00' THEN '未还' ELSE '已还' END AS book_status, favour, book_pic FROM bookcirculate cir, bookbasic ba, bookdetail de WHERE cir.book_id = ba.id AND cir.user_id = $userId AND de.book_id = ba.id";
+		$sql="SELECT ba.id as id,book_name, book_author, book_type, book_info, book_price, CASE updated_at WHEN '0000-00-00' THEN '未还' ELSE '已还' END AS book_status, favour, book_pic FROM bookcirculate cir, bookbasic ba, bookdetail de WHERE cir.book_id = ba.id AND cir.user_id = $userId AND de.book_id = ba.id";
 		//echo $sql;
 		$query = mysql_query($sql);
 		$response = array();
@@ -334,7 +335,8 @@
 		else {
 			$i = 0;
 			while($res = mysql_fetch_array($query)) {
-				$response[$i] = array(  'book_name'=>$res['book_name'],
+				$response[$i] = array(  'book_id'=>$res['id'],
+										'book_name'=>$res['book_name'],
 										'book_author'=>$res['book_author'],
 										'book_type'=>$res['book_type'],
 										'book_info'=>$res['book_info'],
@@ -352,7 +354,7 @@
 
 	//查看已借出的书
 	function adminshow($page_size,$offset){
-		$sql="SELECT book_name, book_author, book_type, book_info, book_price, book_status, favour, book_pic FROM bookbasic ba,bookdetail de WHERE ba.id=de.book_id and book_status='已被借' LIMIT $page_size OFFSET $offset ";
+		$sql="SELECT ba.id as id,book_name, book_author, book_type, book_info, book_price, book_status, favour, book_pic FROM bookbasic ba,bookdetail de WHERE ba.id=de.book_id and book_status='已被借' LIMIT $page_size OFFSET $offset ";
 		//echo $sql;
 		$query = mysql_query($sql);
 		$response = array();
@@ -362,7 +364,8 @@
 		else {
 			$i = 0;
 			while($res = mysql_fetch_array($query)) {
-				$response[$i] = array(  'book_name'=>$res['book_name'],
+				$response[$i] = array(  'book_id'=>$res['id'],
+										'book_name'=>$res['book_name'],
 										'book_author'=>$res['book_author'],
 										'book_type'=>$res['book_type'],
 										'book_info'=>$res['book_info'],
