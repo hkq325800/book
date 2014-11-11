@@ -6,7 +6,7 @@ $con = mysql_connect("localhost", "mengma", "mengma");
 		}
 		
 		mysql_query('SET NAMES utf8');
-		mysql_select_db("book", $con);
+		mysql_select_db("library", $con);
 		//返回json0
 	function database_error(){
 		$response[0]= array('status'=>"0");
