@@ -1,6 +1,5 @@
 <?php
-$con = //mysql_connect("localhost", "root", "");
-		mysql_connect("localhost", "mengma", "mengma");
+$con = mysql_connect("localhost", "mengma", "mengma");//mysql_connect("localhost", "root", "");
 		if(!$con) {
 			die("连接数据库出错");
 			database_error();
