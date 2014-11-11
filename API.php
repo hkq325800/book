@@ -415,12 +415,14 @@
 		$sql="insert bookbasic (book_name,book_author,book_type,act_id,book_info,book_price) values ('$book_name','$book_author','$book_type',$act_id,'$book_info',$book_price)";
 		$query = mysql_query($sql);
 		//echo $sql;
-		//$response = array();
 		if(!$query) {
 			error('sql_error');
 		}
 		else {
-			found();
+			$sql="INSERT bookdetail (book_id) SELECT id FROM bookbasic WHERE book_name = '$book_name' AND act_id = $act_id";
+			$query = mysql_query($sql);
+			//echo $sql;
+			!$query?error('sql_error'):found();
 		}
 	}
 
@@ -434,7 +436,10 @@
 			error('sql_error');
 		}
 		else {
-			found();
+			$sql="delete from bookdetail where book_id=$bookId";
+			$query = mysql_query($sql);
+			//echo $sql;
+			!$query?error('sql_error'):found();
 		}
 	}
 
@@ -460,7 +465,7 @@
 
 	//确认用户权限
 	function rank_verify_json($userId,$password){
-		$sql="select count(*) from user where user_id=$userId and user_rank='图书管理'";
+		$sql="select count(*) from user where user_id=$userId and user_rank='图书管理' and user_password=$password";
 		$query = mysql_query($sql);
 		//echo $sql;
 		$response = array();
@@ -482,7 +487,7 @@
 
 	//确认用户权限
 	function rank_verify_bool($userId,$password){
-		$sql="select count(*) from user where user_id=$userId and user_rank='图书管理'";
+		$sql="select count(*) from user where user_id=$userId and user_rank='图书管理' and user_password=$password";
 		$query = mysql_query($sql);
 		//echo $sql;
 		$response = array();

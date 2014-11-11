@@ -10,14 +10,15 @@ if($_POST){
 } else{
  ?>
 ADD RECORD.
-<form action="http://localhost/webservice/book/API.php/normalUser/register" method="post">
-<input type="text" name="userId" placeholder="userId" /><br>
-<input type="text" name="userName" placeholder="userName" /><br>
-<input type="text" name="password" placeholder="password" /><br>
-<input type="text" name="rePassword" placeholder="rePassword" /><br>
-<input type="text" name="bookinfo" placeholder="bookinfo" /><br>
-<input type="text" name="bookprice" placeholder="bookprice" /><br>
-<input type="text" name="bookstatus" placeholder="bookstatus" /><br>
+<!-- <form action="http://www.flappyant.com/book/API.php/administrator/addBook/12108238/123" method="post"> -->
+<form action="http://localhost/webservice/book/API.php/administrator/addBook/12108238/123" method="post">
+<input type="text" name="bookName" placeholder="bookName" /><br>
+<input type="text" name="bookAuthor" placeholder="bookAuthor" /><br>
+<input type="text" name="bookType" placeholder="bookType" /><br>
+<input type="text" name="actId" placeholder="actId" /><br>
+<input type="text" name="bookInfo" placeholder="bookInfo" /><br>
+<input type="text" name="bookPrice" placeholder="bookPrice" /><br>
+<!-- <input type="text" name="bookstatus" placeholder="bookstatus" /><br> -->
 <input type="hidden" name="_METHOD" value="POST" />
 <input type="submit" value="A D D" />
 </form>
