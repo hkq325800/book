@@ -55,6 +55,29 @@
 	        echo '{"error":{"text":'. $e->getMessage() .'}}'; 
 	    }*/
 
+	//GET修改密码http://localhost/webservice/book/API.php/passChange/12108413/12345/23456
+	$app->get('/passChange/:userId/:oldPass/:newPass/:renewPass',function($xuserId,$xoldPass,$xnewPass,$xrenewPass){
+		require 'conn.php';
+		//将来修改
+		if($xoldPass=='null')
+			$xoldPass=null;
+
+		if($xnewPass!=$xrenewPass) 
+			error('password_error');//确定password是否等于repassword
+		else{
+			if(!verify($xuserId,$xoldPass)){//确定旧密码是否正确，错误返回0
+				error('verify_error');
+			}
+			else{//未找到且注册成功返回1
+				$sql="update user set user_password='$xnewPass' where user_id=$xuserId";
+				//echo $sql;
+				$query = mysql_query($sql);
+				$query?found():error('sql_error');
+			}
+		}
+		mysql_close($con);
+	});
+
 	//（已验证）POST登录http://localhost/webservice/book/API.php/normalUser/login   12108413/12345
 	$app->post('/normalUser/login', function () {
 		require 'conn.php';
@@ -87,8 +110,8 @@
 				$query = mysql_query($sql);
 				$query?found():error('sql_error');
 			}
-			mysql_close($con);
 		}
+		mysql_close($con);
 	});
 
 	//（已验证）GET扫一扫借书http://localhost/webservice/book/API.php/normalUser/borrow/1/12108413/12345
@@ -104,7 +127,6 @@
 			verify($xuserId,$xpassword)?swap($xbookId,$xuserId):error('verify_error');
 		}
 		mysql_close($con);
-		
 	});
 	
 	//（已验证）GET图书搜索http://localhost/webservice/book/API.php/search/1/page=1/php
@@ -325,7 +347,7 @@
 
 	//查看曾借过的书
 	function usershow($userId){//增加显示借阅时间、剩余时间
-		$sql="SELECT ba.id as id,book_name, book_author, book_type, book_info, book_price, CASE updated_at WHEN '0000-00-00' THEN '未还' ELSE '已还' END AS book_status, favour, book_pic FROM bookcirculate cir, bookbasic ba, bookdetail de WHERE cir.book_id = ba.id AND cir.user_id = $userId AND de.book_id = ba.id";
+		$sql="SELECT ba.id as id,book_name, book_author, book_type, book_info, book_price,created_at,datediff(date_add(created_at, interval 1 month),now()) as return_at, CASE updated_at WHEN '0000-00-00' THEN '未还' ELSE '已还' END AS book_status, favour, book_pic FROM bookcirculate cir, bookbasic ba, bookdetail de WHERE cir.book_id = ba.id AND cir.user_id = $userId AND de.book_id = ba.id";
 		//echo $sql;
 		$query = mysql_query($sql);
 		$response = array();
@@ -342,19 +364,20 @@
 										'book_info'=>$res['book_info'],
 										'book_price'=>$res['book_price'],
 										'book_status'=>$res['book_status'],
+										'created_at'=>$res['created_at'],
+										'return_at'=>$res['return_at'],
 										'favour'=>$res['favour'],
 										'book_pic'=>$res['book_pic']);			  
 				$i++;
 			}
 			$response = json_encode($response);
-			//found();
 			echo $response;
 		}
 	}
 
 	//查看已借出的书
-	function adminshow($page_size,$offset){//增加显示借阅人、借书时间、到期时间（30天）
-		$sql="SELECT ba.id as id,book_name, book_author, book_type, book_info, book_price, book_status, favour, book_pic FROM bookbasic ba,bookdetail de WHERE ba.id=de.book_id and book_status='已被借' LIMIT $page_size OFFSET $offset ";
+	function adminshow($page_size,$offset){//增加显示借阅人、借书时间、剩余天数（30天）
+		$sql="SELECT ba.id AS id, book_name, book_author, book_type, book_info, book_price, book_status, `user`.user_name, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at, favour, book_pic FROM bookbasic ba, bookdetail de, bookcirculate cir, `user` WHERE ba.id = de.book_id AND book_status = '已被借' AND cir.book_id = ba.id AND `user`.user_id = cir.user_id LIMIT $page_size OFFSET $offset";
 		//echo $sql;
 		$query = mysql_query($sql);
 		$response = array();
@@ -371,13 +394,15 @@
 										'book_info'=>$res['book_info'],
 										'book_price'=>$res['book_price'],
 										'book_status'=>$res['book_status'],
+										'user_name'=>$res['user_name'],
+										'created_at'=>$res['created_at'],
+										'return_at'=>$res['return_at'],
 										'favour'=>$res['favour'],
 										'book_pic'=>$res['book_pic']);			  
 				$i++;
 			}
 			
 			$response = json_encode($response);
-			//found();
 			echo $response;
 		}
 	}
@@ -404,7 +429,6 @@
 		$sql="update bookbasic set book_name='$book_name',book_author='$book_author',book_type='$book_type',book_info='$book_info',book_status='$book_status' where id=$bookId";
 		$query = mysql_query($sql);
 		//echo $sql;
-		//$response = array();
 		if(!$query) {
 			error('sql_error');
 		}
@@ -434,7 +458,6 @@
 		$sql="delete from bookbasic where id=$bookId";
 		$query = mysql_query($sql);
 		//echo $sql;
-		//$response = array();
 		if(!$query) {
 			error('sql_error');
 		}
@@ -544,7 +567,7 @@
 				$info="post中url错误";
 				break;
 			case 'verify_error':
-				$info="后台提交的用户名密码错误";
+				$info="提交的用户名密码错误";
 				break;
 			case 'password_error':
 				$info="两次输入的密码不一致";
