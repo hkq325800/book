@@ -174,8 +174,8 @@
 		mysql_close($con);
 	});
 
-	//（已验证）POST登录http://localhost/webservice/book/API.php/Administrator/login   12108238/123
-	$app->post('/Administrator/login', function () {
+	//（已验证）POST登录http://localhost/webservice/book/API.php/administrator/login   12108238/123
+	$app->post('/administrator/login', function () {
 		require 'conn.php';
 		global $app;
 		$req = $app->request(); 
