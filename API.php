@@ -306,7 +306,7 @@
 	//用于搜索与获取图书列表
 	function search($user_id,$flag,$xtype,$page_size,$offset,$xkeyword){
 		$where="";
-		$sql="SELECT basic.id AS id, book_name, book_author, book_type, book_info, book_price, book_status, favour, book_pic, CASE basic.id IN ( SELECT book_id FROM booklike WHERE user_id = $user_id ) WHEN FALSE THEN '0' ELSE '1' END AS isLike FROM bookbasic basic JOIN bookdetail detail ON basic.id = detail.book_id LEFT JOIN booklike ON booklike.book_id = basic.id ";
+		$sql="SELECT DISTINCT basic.id AS id, book_name, book_author, book_type, book_info, book_price, book_status, favour, book_pic, CASE basic.id IN ( SELECT book_id FROM booklike WHERE user_id = $user_id ) WHEN FALSE THEN '0' ELSE '1' END AS isLike FROM bookbasic basic JOIN bookdetail detail ON basic.id = detail.book_id LEFT JOIN booklike ON booklike.book_id = basic.id ";
 		if($xkeyword==''){//获取列表
 			if(!$flag){//用户
 				$where=" where book_status in ('已被借','未被借') ";
