@@ -81,6 +81,13 @@
 		mysql_close($con);
 	});
 
+	//GET书本总数http://localhost/webservice/book/API.php/bookSum/0
+	$app->get('/bookSum/:flag',function($flag){
+		require 'conn.php';
+		sum($flag);
+		mysql_close($con);
+	});
+
 	//（已验证）POST登录http://localhost/webservice/book/API.php/normalUser/login   12108413/12345
 	$app->post('/normalUser/login', function () {
 		require 'conn.php';
@@ -251,10 +258,10 @@
 		$book_name = $request->bookName;
 		$book_author = $request->bookAuthor;
 		$book_type = $request->bookType;
-		$act_id = $request->actId;
+		$book_pic = $request->bookPic;
 		$book_info = $request->bookInfo;
 		$book_price = $request->bookPrice;
-		rank_verify_bool($xuserId,$xpassword)?add($book_name,$book_author,$book_type,$act_id,$book_info,$book_price):error('rankverify_error');
+		rank_verify_bool($xuserId,$xpassword)?add($book_name,$book_author,$book_type,$book_pic,$book_info,$book_price):error('rankverify_error');
 		mysql_close($con);
 	});
 
@@ -287,7 +294,7 @@
 		$query?found():error('sql_error');
 	}
 
-	//
+	//用于点赞功能
 	function like($bookId,$userId){
 		$sql="update bookbasic set favour=favour+1 where id=$bookId";
 		//echo $sql;
@@ -301,6 +308,28 @@
 			//echo $sql;
 			!$query?error('sql_error'):found();
 		}
+	}
+
+	//用于获取书本总数以分页
+	function sum($flag){
+		$where="";
+		$sql="select count(*) from bookbasic";
+		if(!$flag){//用户
+			$where=" where book_status in ('已被借','未被借') ";
+		}
+		else{//管理员
+		}
+		$query = mysql_query($sql.$where);
+			//echo $sql;
+			if(!$query){
+				error('sql_error');
+			}
+			else{
+				$res = mysql_fetch_array($query);
+				$response = array('sum'=>$res['count(*)']);
+				$response = json_encode($response);
+				echo $response;
+			}
 	}
 
 	//用于搜索与获取图书列表
@@ -461,17 +490,17 @@
 	}
 
 	//添加图书数据
-	function add($book_name,$book_author,$book_type,$act_id,$book_info,$book_price){
-		$sql="insert bookbasic (book_name,book_author,book_type,act_id,book_info,book_price) values ('$book_name','$book_author','$book_type',$act_id,'$book_info',$book_price)";
+	function add($book_name,$book_author,$book_type,$book_pic,$book_info,$book_price){
+		$sql="insert bookbasic (book_name,book_author,book_type,book_info,book_price) values ('$book_name','$book_author','$book_type','$book_info','$book_price')";
 		$query = mysql_query($sql);
-		//echo $sql;
+		echo $sql;
 		if(!$query) {
 			error('sql_error');
 		}
 		else {
-			$sql="INSERT bookdetail (book_id) SELECT id FROM bookbasic WHERE book_name = '$book_name' AND act_id = $act_id";
+			$sql="INSERT bookdetail (book_id, book_pic) VALUE (( SELECT id FROM bookbasic WHERE book_name = '$book_name' ), '$book_pic' )";
 			$query = mysql_query($sql);
-			//echo $sql;
+			echo $sql;
 			!$query?error('sql_error'):found();
 		}
 	}

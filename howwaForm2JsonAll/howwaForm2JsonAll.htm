@@ -20,15 +20,17 @@ else
   }
 xmlhttp.onreadystatechange=function()
   {
-    //alert(xmlhttp.readyState);
-    //alert(xmlhttp.status);
+    /*alert(xmlhttp.readyState);
+    alert(xmlhttp.status);
+    alert(xmlhttp.responseText);*/
+    document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
   if (xmlhttp.readyState==4 && xmlhttp.status==200)
     {
-    //alert(xmlhttp.responseText);
+    alert(xmlhttp.responseText);
     document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
     }
   }
-xmlhttp.open("POST","http://localhost/webservice/book/API.php/normalUser/login",false);
+xmlhttp.open("POST","http://localhost/webservice/book/API.php/administrator/addBook/12108238/123",false);
 xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 xmlhttp.send(id1.value);
   	//alert(xmlhttp);
@@ -38,8 +40,13 @@ xmlhttp.send(id1.value);
 <BODY>
 <FORM ID="oPersistForm">
 
-<input type="text" name="userId" placeholder="userId" /><br>
-<input type="text" name="password" placeholder="password" /><br>
+<input type="text" name="bookName" placeholder="bookName" /><br>
+<input type="text" name="bookAuthor" placeholder="bookAuthor" /><br>
+<input type="text" name="bookType" placeholder="bookType" /><br>
+<input type="text" name="bookPic" placeholder="bookPic" /><br>
+<input type="text" name="bookInfo" placeholder="bookInfo" /><br>
+<input type="text" name="bookPrice" placeholder="bookPrice" /><br>
+
 
 <!-- 
 <INPUT name=uuid CLASS="userData" TYPE="hidden" ID="uuid" value="abcd-1234-3321">
