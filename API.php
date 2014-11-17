@@ -234,7 +234,7 @@
 		mysql_close($con);
 	});
 
-	//（已验证）POST修改图书信息http://localhost/webservice/book/API.php/booklist/book/update/12108238/100
+	//（已验证）POST修改图书信息http://localhost/webservice/book/API.php/booklist/book/update/12108238/100/123
 	$app->post('/booklist/book/update/:userId/:bookId/:password', function ($xuserId,$xbookId,$xpassword) {
 		require 'conn.php';
 		global $app;
@@ -244,9 +244,10 @@
 		$book_name = $request->bookName;
 		$book_author = $request->bookAuthor;
 		$book_type = $request->bookType;
+		$book_pic = $request->bookPic;
 		$book_info = $request->bookInfo;
 		$book_status = $request->bookStatus;
-		rank_verify_bool($xuserId,$xpassword)?update($xbookId,$book_name,$book_author,$book_type,$book_info,$book_status):error('rankverify_error');
+		rank_verify_bool($xuserId,$xpassword)?update($xbookId,$book_name,$book_author,$book_type,$book_pic,$book_info,$book_status):error('rankverify_error');
 		mysql_close($con);
 	});
 
@@ -497,11 +498,19 @@
 	}
 
 	//更新图书数据
-	function update($bookId,$book_name,$book_author,$book_type,$book_info,$book_status){
-		$sql="update bookbasic set book_name='$book_name',book_author='$book_author',book_type='$book_type',book_info='$book_info',book_status='$book_status' where id=$bookId";
+	function update($book_id,$book_name,$book_author,$book_type,$book_pic,$book_info,$book_status){
+		$sql="update bookbasic set book_name='$book_name',book_author='$book_author',book_type='$book_type',book_info='$book_info',book_status='$book_status' where id=$book_id";
 		$query = mysql_query($sql);
 		//echo $sql;
-		!$query?error('sql_error'):found();
+		if(!$query){
+			error('sql_error');
+		}
+		else{
+			$sql="update bookdetail set book_pic='$book_pic' where book_id=$book_id";
+			$query = mysql_query($sql);
+			//echo $sql;
+			!$query?error('sql_error'):found();
+		}
 	}
 
 	//添加图书数据
