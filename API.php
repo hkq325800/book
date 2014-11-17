@@ -115,15 +115,7 @@
 		if($xpassword!=$xrepassword) 
 			error('password_error');//确定password是否等于repassword
 		else{
-			if(verify($xuserId,'')){//确定user_id是否重复，重复返回0
-				error('userid_error');
-			}
-			else{//未找到且注册成功返回1
-				$sql="insert into user (user_id,user_name,user_password) values ($xuserId,'$xuserName','$xpassword')";
-				//echo $sql;
-				$query = mysql_query($sql);
-				$query?found():error('sql_error');
-			}
+			verify($xuserId,'')?error('userid_error'):register();//确定user_id是否重复，重复返回0//未找到且注册成功返回1
 		}
 		mysql_close($con);
 	});
@@ -200,7 +192,7 @@
 	$app->get('/searchA/:userId/:type/page=:page/:keyword', function ($xuserId,$xtype,$xpage,$xkeyword){
 		$page_size=pagesize;
 		$offset=($xpage-1)*$page_size;
-		if($xpage=='not'){
+		if($xpage=='not'){//可以手动设置是否分页
 			$page_size='';
 			$offset='';
 		}
@@ -312,7 +304,7 @@
 		if(!$query) {
 			error('sql_error');
 		}
-		else {
+		else {//在booklike表中插入记录
 			$sql="insert booklike (book_id,user_id) values ($bookId,$userId)";
 			$query = mysql_query($sql);
 			//echo $sql;
@@ -328,21 +320,21 @@
 			$where=" where book_status in ('已被借','未被借') ";
 		}
 		else{//管理员
-			if($type){
-				$sql="SELECT count(*) FROM bookbasic ba WHERE book_status = '已被借'";
+			if($type){//已被借
+				$where="WHERE book_status = '已被借'";
 			}
 		}
-			$query = mysql_query($sql.$where);
-			//echo $sql;
-			if(!$query){
-				error('sql_error');
-			}
-			else{
-				$res = mysql_fetch_array($query);
-				$response = array('sum'=>$res['count(*)']);
-				$response = json_encode($response);
-				echo $response;
-			}
+		$query = mysql_query($sql.$where);
+		//echo $sql;
+		if(!$query){
+			error('sql_error');
+		}
+		else{
+			$res = mysql_fetch_array($query);
+			$response = array('sum'=>$res['count(*)']);
+			$response = json_encode($response);
+			echo $response;
+		}
 	}
 
 	//用于搜索与获取图书列表
@@ -356,12 +348,9 @@
 			}
 		}
 		else{//搜索
-			if(!$flag){//用户
-				$where=" where book_status in ('已被借','未被借') and $xtype like '%$xkeyword%' ";
-			}
-			else{//管理员
-				$where=" where $xtype like '%$xkeyword%' ";
-			}
+			!$flag?
+			$where=" where book_status in ('已被借','未被借') and $xtype like '%$xkeyword%' "：
+			$where=" where $xtype like '%$xkeyword%' ";
 		}
 		$sql=$sql.$where;
 		if(!$page_size==''&&$offset==''){
@@ -389,23 +378,30 @@
 										'isLike'=>$res['isLike']);			  
 				$i++;
 			}
-			
 			$response = json_encode($response);
 			//found();
 			echo $response;
 		}
 	}
 
+	//注册
+	function register(){
+		$sql="insert into user (user_id,user_name,user_password) values ($xuserId,'$xuserName','$xpassword')";
+		//echo $sql;
+		$query = mysql_query($sql);
+		$query?found():error('sql_error');
+	}
+
 	//完成书的return
 	function confirm($bookId){
-		if(book_verify($bookId)){
+		if(book_verify($bookId)){//更新bookbasic
 			$sql="update bookbasic set book_status='未被借' where id=$bookId";
 			$query = mysql_query($sql);
 			//echo $sql;
 			if(!$query) {
 				error('sql_error');
 			}
-			else {
+			else {//更新bookcirculate
 				$updated_at = date('Y-m-d');
 				$sql="update bookcirculate set updated_at='$updated_at' where book_id=$bookId and updated_at='0000-00-00'";
 				$query = mysql_query($sql);
@@ -482,14 +478,14 @@
 
 	//完成扫一扫借书
 	function swap($bookId,$userId){
-		$updated_at = date('Y-m-d');
+		$updated_at = date('Y-m-d');//更新bookbasic表
 		$sql="update bookbasic set book_status='已被借' where id=$bookId";
 		$query = mysql_query($sql);
 		//echo $sql;
 		if(!$query) {
 			error('sql_error');
 		}
-		else {
+		else {//bookcirculate插入借书记录
 			$sql="insert bookcirculate (book_id,user_id,created_at) values ($bookId,$userId,'$updated_at')";
 			$query = mysql_query($sql);
 			//echo $sql;
@@ -500,12 +496,12 @@
 	//更新图书数据
 	function update($book_id,$book_name,$book_author,$book_type,$book_pic,$book_info,$book_status){
 		$sql="update bookbasic set book_name='$book_name',book_author='$book_author',book_type='$book_type',book_info='$book_info',book_status='$book_status' where id=$book_id";
-		$query = mysql_query($sql);
+		$query = mysql_query($sql);//更新bookbasic
 		//echo $sql;
 		if(!$query){
 			error('sql_error');
 		}
-		else{
+		else{//更新bookdetail
 			$sql="update bookdetail set book_pic='$book_pic' where book_id=$book_id";
 			$query = mysql_query($sql);
 			//echo $sql;
@@ -516,12 +512,12 @@
 	//添加图书数据
 	function add($book_name,$book_author,$book_type,$book_pic,$book_info,$book_price){
 		$sql="insert bookbasic (book_name,book_author,book_type,book_info,book_price) values ('$book_name','$book_author','$book_type','$book_info','$book_price')";
-		$query = mysql_query($sql);
+		$query = mysql_query($sql);//bookbasic插入图书数据
 		echo $sql;
 		if(!$query) {
 			error('sql_error');
 		}
-		else {
+		else {//bookdetail插入图书数据
 			$sql="INSERT bookdetail (book_id, book_pic) VALUE (( SELECT id FROM bookbasic WHERE book_name = '$book_name' ), '$book_pic' )";
 			$query = mysql_query($sql);
 			echo $sql;
@@ -530,14 +526,14 @@
 	}
 
 	//删除图书数据
-	function del($bookId){
+	function del($bookId){//从bookbasic删除数据
 		$sql="delete from bookbasic where id=$bookId";
 		$query = mysql_query($sql);
 		//echo $sql;
 		if(!$query) {
 			error('sql_error');
 		}
-		else {
+		else {//从bookdetail删除数据
 			$sql="delete from bookdetail where book_id=$bookId";
 			$query = mysql_query($sql);
 			//echo $sql;
@@ -677,7 +673,6 @@
 			case 'like_error':
 				$info="您已赞过此书";
 				break;
-			
 			default:
 				$info="未知错误";
 				break;
