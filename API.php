@@ -195,11 +195,18 @@
 
 	//（已验证）GET图书搜索http://localhost/webservice/book/API.php/searchA/12108238/1/page=1/php
 	//（已验证）GET获取图书列表http://localhost/webservice/book/API.php/searchA/12108238/5/page=1/all
-	$app->get('/searchA/:userId/:type/page=:page/:keyword', function ($xuserId,$xtype,$xpage,$xkeyword) {
-		if($xtype=='5')
-			$xkeyword='';//必须要传$xkeyword不然无法访问，将input中空值自动变为all
+	//（已验证）GET图书搜索http://localhost/webservice/book/API.php/searchA/12108238/1/page=not/php
+	//（已验证）GET获取图书列表http://localhost/webservice/book/API.php/searchA/12108238/5/page=not/all
+	$app->get('/searchA/:userId/:type/page=:page/:keyword', function ($xuserId,$xtype,$xpage,$xkeyword){
 		$page_size=pagesize;
 		$offset=($xpage-1)*$page_size;
+		if($xpage=='not'){
+			$page_size='';
+			$offset='';
+		}
+		if($xtype=='5'){
+			$xkeyword='';//必须要传$xkeyword不然无法访问，将input中空值自动变为all
+		}
 		require 'conn.php';
 		switch ($xtype) {
 			case '1'://书名
@@ -221,6 +228,8 @@
 				error('url_error');
 				break;
 		}
+		//echo $page_size;
+		//echo $offset;
 		search($xuserId,1,$xtype,$page_size,$offset,$xkeyword);
 		mysql_close($con);
 	});
@@ -337,6 +346,7 @@
 
 	//用于搜索与获取图书列表
 	function search($user_id,$flag,$xtype,$page_size,$offset,$xkeyword){
+		$turn="";
 		$where="";
 		$sql="SELECT DISTINCT basic.id AS id, book_name, book_author, book_type, book_info, book_price, book_status, favour, book_pic, CASE basic.id IN ( SELECT book_id FROM booklike WHERE user_id = $user_id ) WHEN FALSE THEN '0' ELSE '1' END AS isLike FROM bookbasic basic JOIN bookdetail detail ON basic.id = detail.book_id LEFT JOIN booklike ON booklike.book_id = basic.id ";
 		if($xkeyword==''){//获取列表
@@ -353,7 +363,9 @@
 			}
 		}
 		$sql=$sql.$where;
-		$turn=" order by id LIMIT $page_size OFFSET $offset ";
+		if(!$page_size==''&&$offset==''){
+			$turn=" order by id LIMIT $page_size OFFSET $offset ";
+		}
 		$sql=$sql.$turn;
 		//echo $sql;
 		$query = mysql_query($sql);
