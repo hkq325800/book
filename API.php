@@ -81,10 +81,10 @@
 		mysql_close($con);
 	});
 
-	//GET书本总数http://localhost/webservice/book/API.php/bookSum/0
-	$app->get('/bookSum/:flag',function($flag){
+	//GET书本总数http://localhost/webservice/book/API.php/bookSum/0/1
+	$app->get('/bookSum/:flag/:type',function($flag,$type){//flag决定身份，type决定搜索类型
 		require 'conn.php';
-		sum($flag);
+		sum($flag,$type);
 		mysql_close($con);
 	});
 
@@ -311,15 +311,18 @@
 	}
 
 	//用于获取书本总数以分页
-	function sum($flag){
+	function sum($flag,$type){
 		$where="";
 		$sql="select count(*) from bookbasic";
 		if(!$flag){//用户
 			$where=" where book_status in ('已被借','未被借') ";
 		}
 		else{//管理员
+			if($type){
+				$sql="SELECT count(*) FROM bookbasic ba WHERE book_status = '已被借'";
+			}
 		}
-		$query = mysql_query($sql.$where);
+			$query = mysql_query($sql.$where);
 			//echo $sql;
 			if(!$query){
 				error('sql_error');
