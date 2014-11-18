@@ -139,6 +139,10 @@
 			$xkeyword='';//~~~~~必须要传$xkeyword不然无法访问，将input中空值自动变为all
 		$page_size=pagesize;
 		$offset=($xpage-1)*$page_size;
+		if($xpage=='not'){//可以手动设置是否分页
+			$page_size='';
+			$offset='';
+		}
 		require 'conn.php';
 		switch ($xtype) {
 			case '1'://书名
@@ -352,9 +356,9 @@
 			$where=" where book_status in ('已被借','未被借') and $xtype like '%$xkeyword%' ":
 			$where=" where $xtype like '%$xkeyword%' ";
 		}
-		$sql=$sql.$where;
-		if(!$page_size==''&&$offset==''){
-			$turn=" order by id LIMIT $page_size OFFSET $offset ";
+		$sql=$sql.$where." order by id";
+		if(!$page_size==''){
+			$turn=" LIMIT $page_size OFFSET $offset ";
 		}
 		$sql=$sql.$turn;
 		//echo $sql;
