@@ -369,7 +369,11 @@
 		}
 		else {
 			$i = 0;
+
 			while($res = mysql_fetch_array($query)) {
+				if($res['isLike']=="0")
+					{$isLike=false;}
+				else{$isLike=true;}
 				$response[$i] = array(  'book_id'=>$res['id'],
 										'book_name'=>$res['book_name'],
 										'book_author'=>$res['book_author'],
@@ -379,7 +383,7 @@
 										'book_status'=>$res['book_status'],
 										'favour'=>$res['favour'],
 										'book_pic'=>$res['book_pic'],
-										'isLike'=>$res['isLike']);			  
+										'isLike'=>$isLike);			  
 				$i++;
 			}
 			$response = json_encode($response);
@@ -428,6 +432,9 @@
 		else {
 			$i = 0;
 			while($res = mysql_fetch_array($query)) {
+				if($res['isLike']=="0")
+					{$isLike=false;}
+				else{$isLike=true;}
 				$response[$i] = array(  'book_id'=>$res['id'],
 										'book_name'=>$res['book_name'],
 										'book_author'=>$res['book_author'],
@@ -439,7 +446,7 @@
 										'return_at'=>$res['return_at'],
 										'favour'=>$res['favour'],
 										'book_pic'=>$res['book_pic'],
-										'isLike'=>$res['isLike']);			  
+										'isLike'=>$isLike);			  
 				$i++;
 			}
 			$response = json_encode($response);
@@ -459,6 +466,9 @@
 		else {
 			$i = 0;
 			while($res = mysql_fetch_array($query)) {
+				if($res['isLike']=="0")
+					{$isLike=false;}
+				else{$isLike=true;}
 				$response[$i] = array(  'book_id'=>$res['id'],
 										'book_name'=>$res['book_name'],
 										'book_author'=>$res['book_author'],
@@ -471,7 +481,7 @@
 										'return_at'=>$res['return_at'],
 										'favour'=>$res['favour'],
 										'book_pic'=>$res['book_pic'],
-										'isLike'=>$res['isLike']);			  
+										'isLike'=>$isLike);			  
 				$i++;
 			}
 			
