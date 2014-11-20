@@ -20,6 +20,6 @@ AdministratorPlatform.controller('barCodeScanCtrl', ['$rootScope', '$scope', 're
             book_info:$scope.book_info,
             book_id:$scope.book_id
         }
-            $scope.DIYBarCodeUrl = 'http://qr.liantu.com/api.php?text='+content;
+            $scope.DIYBarCodeUrl = 'http://qr.liantu.com/api.php?text='+'{book_name:'+content.book_name+',book_info:'+content.book_info+',book_id:'+content.book_id+'}';
     }
 }])
