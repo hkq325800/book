@@ -354,7 +354,7 @@
 		else{//搜索
 			!$flag?
 			$where=" where book_status in ('已被借','未被借') and $xtype like '%$xkeyword%' ":
-			$where=" where '$xtype' like '%$xkeyword%' ";
+			$where=" where $xtype like '%$xkeyword%' ";
 		}
 		$sql=$sql.$where." order by id";
 		if(!$page_size==''){
