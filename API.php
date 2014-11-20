@@ -395,7 +395,7 @@
 	//注册
 	function register($userId,$userName,$password){
 		$sql="insert into user (user_id,user_name,user_password) values ('$userId','$userName','$password')";
-		echo $sql;
+		//echo $sql;
 		$query = mysql_query($sql);
 		$query?found():error('sql_error');
 	}
