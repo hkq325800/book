@@ -115,7 +115,7 @@
 		if($xpassword!=$xrepassword) 
 			error('password_error');//确定password是否等于repassword
 		else{
-			verify($xuserId,'')?error('userid_error'):register();//确定user_id是否重复，重复返回0//未找到且注册成功返回1
+			verify($xuserId,'')?error('userid_error'):register($xuserId,$xuserName,$xpassword);//确定user_id是否重复，重复返回0//未找到且注册成功返回1
 		}
 		mysql_close($con);
 	});
@@ -294,7 +294,7 @@
 	//以下为所建函数
 	//用于更改密码
 	function passChange($userId,$password){
-		$sql="update user set user_password='$password' where user_id=$userId";
+		$sql="update user set user_password='$password' where user_id='$userId'";
 		//echo $sql;
 		$query = mysql_query($sql);
 		$query?found():error('sql_error');
@@ -302,14 +302,14 @@
 
 	//用于点赞功能
 	function like($bookId,$userId){
-		$sql="update bookbasic set favour=favour+1 where id=$bookId";
+		$sql="update bookbasic set favour=favour+1 where id='$bookId'";
 		//echo $sql;
 		$query = mysql_query($sql);
 		if(!$query) {
 			error('sql_error');
 		}
 		else {//在booklike表中插入记录
-			$sql="insert booklike (book_id,user_id) values ($bookId,$userId)";
+			$sql="insert booklike (book_id,user_id) values ('$bookId','$userId')";
 			$query = mysql_query($sql);
 			//echo $sql;
 			!$query?error('sql_error'):found();
@@ -345,7 +345,7 @@
 	function search($user_id,$flag,$xtype,$page_size,$offset,$xkeyword){
 		$turn="";
 		$where="";
-		$sql="SELECT DISTINCT basic.id AS id, book_name, book_author, book_type, book_info, book_price, book_status, favour, book_pic, CASE basic.id IN ( SELECT book_id FROM booklike WHERE user_id = $user_id ) WHEN FALSE THEN '0' ELSE '1' END AS isLike FROM bookbasic basic JOIN bookdetail detail ON basic.id = detail.book_id LEFT JOIN booklike ON booklike.book_id = basic.id ";
+		$sql="SELECT DISTINCT basic.id AS id, book_name, book_author, book_type, book_info, book_price, book_status, favour, book_pic, CASE basic.id IN ( SELECT book_id FROM booklike WHERE user_id = '$user_id' ) WHEN FALSE THEN '0' ELSE '1' END AS isLike FROM bookbasic basic JOIN bookdetail detail ON basic.id = detail.book_id LEFT JOIN booklike ON booklike.book_id = basic.id ";
 		if($xkeyword==''){//获取列表
 			if(!$flag){//用户
 				$where=" where book_status in ('已被借','未被借') ";
@@ -354,7 +354,7 @@
 		else{//搜索
 			!$flag?
 			$where=" where book_status in ('已被借','未被借') and $xtype like '%$xkeyword%' ":
-			$where=" where $xtype like '%$xkeyword%' ";
+			$where=" where '$xtype' like '%$xkeyword%' ";
 		}
 		$sql=$sql.$where." order by id";
 		if(!$page_size==''){
@@ -393,9 +393,9 @@
 	}
 
 	//注册
-	function register(){
-		$sql="insert into user (user_id,user_name,user_password) values ($xuserId,'$xuserName','$xpassword')";
-		//echo $sql;
+	function register($userId,$userName,$password){
+		$sql="insert into user (user_id,user_name,user_password) values ('$userId','$userName','$password')";
+		echo $sql;
 		$query = mysql_query($sql);
 		$query?found():error('sql_error');
 	}
@@ -403,7 +403,7 @@
 	//完成书的return
 	function confirm($bookId){
 		if(book_verify($bookId)){//更新bookbasic
-			$sql="update bookbasic set book_status='未被借' where id=$bookId";
+			$sql="update bookbasic set book_status='未被借' where id='$bookId'";
 			$query = mysql_query($sql);
 			//echo $sql;
 			if(!$query) {
@@ -411,7 +411,7 @@
 			}
 			else {//更新bookcirculate
 				$updated_at = date('Y-m-d');
-				$sql="update bookcirculate set updated_at='$updated_at' where book_id=$bookId and updated_at='0000-00-00'";
+				$sql="update bookcirculate set updated_at='$updated_at' where book_id='$bookId' and updated_at='0000-00-00'";
 				$query = mysql_query($sql);
 				//echo $sql;
 				!$query?error('sql_error'):found();
@@ -422,7 +422,7 @@
 
 	//查看曾借过的书
 	function usershow($userId){//增加显示借阅时间、剩余时间
-		$sql="SELECT ba.id as id,book_name, book_author, book_type, book_info, book_price,created_at,datediff(date_add(created_at, interval 1 month),now()) as return_at, CASE updated_at WHEN '0000-00-00' THEN '未还' ELSE '已还' END AS book_status, favour, book_pic, CASE ba.id IN ( SELECT book_id FROM booklike WHERE user_id = $userId ) WHEN FALSE THEN '0' ELSE '1' END AS isLike FROM bookcirculate cir, bookbasic ba, bookdetail de WHERE cir.book_id = ba.id AND cir.user_id = $userId AND de.book_id = ba.id";
+		$sql="SELECT ba.id as id,book_name, book_author, book_type, book_info, book_price,created_at,datediff(date_add(created_at, interval 1 month),now()) as return_at, CASE updated_at WHEN '0000-00-00' THEN '未还' ELSE '已还' END AS book_status, favour, book_pic, CASE ba.id IN ( SELECT book_id FROM booklike WHERE user_id = '$userId' ) WHEN FALSE THEN '0' ELSE '1' END AS isLike FROM bookcirculate cir, bookbasic ba, bookdetail de WHERE cir.book_id = ba.id AND cir.user_id = '$userId' AND de.book_id = ba.id";
 		//echo $sql;
 		$query = mysql_query($sql);
 		$response = array();
@@ -456,7 +456,7 @@
 
 	//查看已借出的书
 	function adminshow($userId,$page_size,$offset){//增加显示借阅人、借书时间、剩余天数（30天）
-		$sql="SELECT ba.id AS id, book_name, book_author, book_type, book_info, book_price, book_status, `user`.user_name, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at, favour, book_pic, CASE ba.id IN ( SELECT book_id FROM booklike WHERE user_id = $userId ) WHEN FALSE THEN '0' ELSE '1' END AS isLike FROM bookbasic ba, bookdetail de, bookcirculate cir, `user` WHERE ba.id = de.book_id AND book_status = '已被借' AND cir.book_id = ba.id AND `user`.user_id = cir.user_id LIMIT $page_size OFFSET $offset";
+		$sql="SELECT ba.id AS id, book_name, book_author, book_type, book_info, book_price, book_status, `user`.user_name, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at, favour, book_pic, CASE ba.id IN ( SELECT book_id FROM booklike WHERE user_id = '$userId' ) WHEN FALSE THEN '0' ELSE '1' END AS isLike FROM bookbasic ba, bookdetail de, bookcirculate cir, `user` WHERE ba.id = de.book_id AND book_status = '已被借' AND cir.book_id = ba.id AND `user`.user_id = cir.user_id LIMIT $page_size OFFSET $offset";
 		//echo $sql;
 		$query = mysql_query($sql);
 		$response = array();
@@ -493,14 +493,14 @@
 	//完成扫一扫借书
 	function swap($bookId,$userId){
 		$updated_at = date('Y-m-d');//更新bookbasic表
-		$sql="update bookbasic set book_status='已被借' where id=$bookId";
+		$sql="update bookbasic set book_status='已被借' where id='$bookId'";
 		$query = mysql_query($sql);
 		//echo $sql;
 		if(!$query) {
 			error('sql_error');
 		}
 		else {//bookcirculate插入借书记录
-			$sql="insert bookcirculate (book_id,user_id,created_at) values ($bookId,$userId,'$updated_at')";
+			$sql="insert bookcirculate (book_id,user_id,created_at) values ('$bookId','$userId','$updated_at')";
 			$query = mysql_query($sql);
 			//echo $sql;
 			!$query?error('sql_error'):found();
@@ -516,7 +516,7 @@
 			error('sql_error');
 		}
 		else{//更新bookdetail
-			$sql="update bookdetail set book_pic='$book_pic' where book_id=$book_id";
+			$sql="update bookdetail set book_pic='$book_pic' where book_id='$book_id'";
 			$query = mysql_query($sql);
 			//echo $sql;
 			!$query?error('sql_error'):found();
@@ -541,14 +541,14 @@
 
 	//删除图书数据
 	function del($bookId){//从bookbasic删除数据
-		$sql="delete from bookbasic where id=$bookId";
+		$sql="delete from bookbasic where id='$bookId'";
 		$query = mysql_query($sql);
 		//echo $sql;
 		if(!$query) {
 			error('sql_error');
 		}
 		else {//从bookdetail删除数据
-			$sql="delete from bookdetail where book_id=$bookId";
+			$sql="delete from bookdetail where book_id='$bookId'";
 			$query = mysql_query($sql);
 			//echo $sql;
 			!$query?error('sql_error'):found();
@@ -557,7 +557,7 @@
 
 	//确认书的状态是否为"已被借"
 	function book_verify($bookId){
-		$sql="select book_status from bookbasic where id=$bookId";
+		$sql="select book_status from bookbasic where id='$bookId'";
 		$query = mysql_query($sql);
 		//echo $sql;
 		$response = array();
@@ -577,7 +577,7 @@
 
 	//确认用户权限
 	function rank_verify_json($userId,$password){
-		$sql="select count(*) from user where user_id=$userId and user_rank='图书管理' and user_password=$password";
+		$sql="select count(*) from user where user_id='$userId' and user_rank='图书管理' and user_password='$password'";
 		$query = mysql_query($sql);
 		//echo $sql;
 		$response = array();
@@ -599,7 +599,7 @@
 
 	//确认用户权限
 	function rank_verify_bool($userId,$password){
-		$sql="select count(*) from user where user_id=$userId and user_rank='图书管理' and user_password=$password";
+		$sql="select count(*) from user where user_id='$userId' and user_rank='图书管理' and user_password='$password'";
 		$query = mysql_query($sql);
 		//echo $sql;
 		$response = array();
@@ -621,7 +621,7 @@
 
 	//确认用户是否已赞过此书
 	function like_verify($userId,$bookId){
-		$sql="select count(*) from booklike where user_id=$userId and book_id=$bookId";
+		$sql="select count(*) from booklike where user_id='$userId' and book_id='$bookId'";
 		$query = mysql_query($sql);
 		//echo $sql;
 		$response = array();
@@ -642,8 +642,8 @@
 	//1.确认用户名是否存在2.验证用户登录
 	function verify($userId,$password){
 		$password==''?
-		$sql="select count(*) from user where user_id=$userId":
-		$sql="select count(*) from user where user_id=$userId and user_password=$password";
+		$sql="select count(*) from user where user_id='$userId'":
+		$sql="select count(*) from user where user_id='$userId' and user_password='$password'";
 		$query = mysql_query($sql);
 		//echo $sql;
 		$response = array();
