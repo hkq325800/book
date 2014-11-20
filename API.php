@@ -325,10 +325,11 @@
 		}
 		else{//管理员
 			if($type){//已被借
-				$where="WHERE book_status = '已被借'";
+				$where=" WHERE book_status = '已被借'";
 			}
 		}
-		$query = mysql_query($sql.$where);
+		$sql=$sql.$where;
+		$query = mysql_query($sql);
 		//echo $sql;
 		if(!$query){
 			error('sql_error');
