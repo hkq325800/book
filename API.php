@@ -85,7 +85,7 @@
 		mysql_close($con);
 	});
 
-	//（已验证）（已验证）GET书本总数http://localhost/webservice/book/API.php/bookSum/0/1
+	//（已验证）GET书本总数http://localhost/webservice/book/API.php/bookSum/0/1
 	$app->get('/bookSum/:flag/:type',function($flag,$type){//flag决定身份，type决定搜索类型
 		require 'conn.php';
 		sum($flag,$type);
