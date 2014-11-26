@@ -1,4 +1,4 @@
-/*
+﻿/*
 Navicat MySQL Data Transfer
 
 Source Server         : apartment
@@ -390,7 +390,7 @@ INSERT INTO `user` VALUES ('13', '12108222', '沈之川', 'ac677272ad2b6480bc834
 INSERT INTO `user` VALUES ('14', '12108227', '熊君睿', '0e44b4c6c34dc8ce18c01770219ca1e1', '普通用户');
 INSERT INTO `user` VALUES ('15', '12108230', '章晨昱', '84b1df4354bdce1324009d97073e3856', '普通用户');
 INSERT INTO `user` VALUES ('16', '12108234', '张旭', 'fec6b9b77656406c09ef0c06017f252a', '普通用户');
-INSERT INTO `user` VALUES ('17', '12108238', '钟云昶', '6da788b5325d4e487f38930e2cd90c08', '图书管理');
+INSERT INTO `user` VALUES ('17', '12108238', '钟云昶', '123', '图书管理');
 INSERT INTO `user` VALUES ('18', '12108305', '王雪莹', '12bb5766cc55ef0e09aa196e20959729', '普通用户');
 INSERT INTO `user` VALUES ('19', '12108306', '曹平涛', 'c304fb8318c7a552a4e241e1b3c5c2dc', '普通用户');
 INSERT INTO `user` VALUES ('20', '12108309', '程彦', '2f7a10e0faa742d8f5f4665d6e4f3e05', '普通用户');
@@ -399,4 +399,4 @@ INSERT INTO `user` VALUES ('22', '12108316', '刘铁', '770653b67a74cf253287e053
 INSERT INTO `user` VALUES ('23', '12108318', '罗鹏展', '2733b73426c8d43db20f607f886f51f7', '普通用户');
 INSERT INTO `user` VALUES ('24', '12108327', '谢俊杰', 'b6c63bc373200d84c0020d7f5b7c6ef2', '购书管理');
 INSERT INTO `user` VALUES ('25', '12108331', '许鹏飞', '5370b00a2b3f1a75512ee6facf57127d', '普通用户');
-INSERT INTO `user` VALUES ('26', '12108413', '黄可庆', 'ca8e4dea8b6c7e5dffb81548989ea0b2', '普通用户');
+INSERT INTO `user` VALUES ('26', '12108413', '黄可庆', '12345', '普通用户');
