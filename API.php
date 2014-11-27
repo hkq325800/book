@@ -4,6 +4,7 @@
 	\Slim\Slim::registerAutoloader();
 	define("pagesize", 15, true);
 	define("saltkey", 'nigoule');
+	define("url",'http://www.flappyant.com/book/API.php');
 	$app = new \Slim\Slim();
 
 	header("Access-Control-Allow-Origin: *");
@@ -13,13 +14,19 @@
 
 	/*----------通用类----------*/
 
+	//test
+	$app->get('/',function(){
+		echo '<div style="margin-left:550px;margin-top:200px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp欢迎光临<br>=><a href="http://www.baidu.com">www.我爱作死作作死.com</a>=<</div>';
+	});
+
 	//（已验证）POST修改密码http://localhost/webservice/book/API.php/public/passChange/12108238   6da788b5325d4e487f38930e2cd90c08/ca8e4dea8b6c7e5dffb81548989ea0b2/ca8e4dea8b6c7e5dffb81548989ea0b2
-	$app->post('/public/passChange/:userId',function($xuserId){
+	$app->post('/public/passChange',function(){
 		require 'conn.php';
 		global $app;
 		$req = $app->request(); 
 		$postdata = file_get_contents("php://input");
 		$request = json_decode($postdata);
+		$xuserId = $request->userId;
 		$xoldPass = $request->oldPass;
 		$xnewPass = $request->newPass;
 		$xrenewPass = $request->renewPass;
@@ -56,17 +63,15 @@
 	    !identity('user','user_id',$xuserId,'','')?error('verify_error'):password($xuserId);
 	    mysql_close($con);
 	});
-	//GET显示图书详细(book_kind->booklist)http://localhost/webservice/book/API.php/public/detail/47/12108413
-	$app->get('/public/detail/:bookKind/:userId',function($xbookKind,$xuserId){
+	//（已验证）GET显示图书详细(book_kind->booklist)http://localhost/webservice/book/API.php/public/detail/47/12108413
+	$app->get('/public/detail/:bookKind',function($xbookKind){
 		require 'conn.php';
-		!identity('user','user_id',$xuserId,'','')?error('verify_error'):detail($xbookKind,$xuserId);
+		detail($xbookKind);
 		mysql_close($con);
 	});
-	//GET最近添加的图书http://localhost/webservice/book/API.php/public/recentAdd/12108413
+	//（已验证）GET最近添加的图书http://localhost/webservice/book/API.php/public/recentAdd/12108413
 	$app->get('/public/recentAdd/:userId',function($xuserId){
 		require 'conn.php';
-		/*$page_size=pagesize;
-		$offset=($xpage-1)*$page_size;*/
 		!identity('user','user_id',$xuserId,'','')?error('verify_error'):recentAdd($xuserId);
 		mysql_close($con);
 	});
@@ -124,10 +129,6 @@
 			$xkeyword='';//~~~~~必须要传$xkeyword不然无法访问，将input中空值自动变为all
 		$page_size=pagesize;
 		$offset=($xpage-1)*$page_size;
-		if($xpage=='not'){//可以手动设置是否分页
-			$page_size='';
-			$offset='';
-		}
 		require 'conn.php';
 		switch ($xtype) {
 			case '1'://书名
@@ -152,7 +153,7 @@
 		search($xuserId,0,$xtype,$page_size,$offset,$xkeyword);
 		mysql_close($con);
 	});
-	//（已验证）GET已借阅http://localhost/webservice/book/API.php/normal/showRe/12108413/12108413
+	//（已验证）GET已借阅http://localhost/webservice/book/API.php/normal/showRe/12108413/12108413/page=1
 	$app->get('/normal/showRe/:userId/:password/page=:page', function ($xuserId,$xpassword,$xpage) {
 		require 'conn.php';
 		//先验证再输出
@@ -181,16 +182,12 @@
 	});
 	//（已验证）GET图书搜索http://localhost/webservice/book/API.php/admin/search/12108238/1/page=1/php
 	//（已验证）GET获取图书列表http://localhost/webservice/book/API.php/admin/search/12108238/5/page=1/all
-	//（已验证）GET图书搜索http://localhost/webservice/book/API.php/admin/search/12108238/1/page=not/php
-	//（已验证）GET获取图书列表http://localhost/webservice/book/API.php/admin/search/12108238/5/page=not/all
+	//（已验证）GET图书搜索http://localhost/webservice/book/API.php/admin/search/12108238/1/page=0/php
+	//（已验证）GET获取图书列表http://localhost/webservice/book/API.php/admin/search/12108238/5/page=0/all
 	$app->get('/admin/search/:userId/:type/page=:page/:keyword', function ($xuserId,$xtype,$xpage,$xkeyword){
 		require 'conn.php';
 		$page_size=pagesize;
 		$offset=($xpage-1)*$page_size;
-		if($xpage=='not'){//可以手动设置是否分页
-			$page_size='';
-			$offset='';
-		}
 		if($xtype=='5'){
 			$xkeyword='';//必须要传$xkeyword不然无法访问，将input中空值自动变为all
 		}
@@ -273,13 +270,12 @@
 		require 'conn.php';
 		$page_size=pagesize;
 		$offset=($xpage-1)*$page_size;
-		//先验证再输出
 		if(adminverify($xuserId,$xpassword)){
 			adminshow($page_size,$offset);
 		}
 		mysql_close($con);
 	});
-	//GET查看已超期的图书http://localhost/webservice/book/API.php/admin/showOut/12108238/12108238
+	//（已验证）GET查看已超期的图书http://localhost/webservice/book/API.php/admin/showOut/12108238/12108238
 	$app->get('/admin/showOut/:userId/:password', function ($xuserId,$xpassword) {
 		require 'conn.php';
 		//先验证再输出
@@ -365,29 +361,26 @@
 		"book_status":书本状态,
 		"user_name":借阅人,
 		"created_at":借阅日期}*/
-	function detail($bookKind,$userId){
+	function detail($bookKind){
 		$sql="SELECT book_name,book_author,book_pub,book_type,book_edit,book_price,book_pic,book_link,book_info,favour from bookbasic where id='$bookKind'";
 		//echo $sql."<br/>";
 		$query = mysql_query($sql);
-		$response = array();
 		if(!$query) {
 			error('sql_error');
 		}
 		else {
-			$i = 0;
-			while($res = mysql_fetch_array($query)) {
-				$response[$i] = array(  'book_name'=>$res['book_name'],
-										'book_author'=>$res['book_author'],
-										'book_pub'=>$res['book_pub'],
-										'book_type'=>$res['book_type'],
-										'book_edit'=>$res['book_edit'],
-										'book_price'=>$res['book_price'],
-										'book_pic'=>$res['book_pic'],
-										'book_link'=>$res['book_link'],
-										'book_info'=>$res['book_info'],
-										'favour'=>$res['favour']);			  
-				$i++;
-			}
+			$res = mysql_fetch_array($query);
+			$book_detail = array();
+			$book_detail = array('book_name'=>$res['book_name'],
+								'book_author'=>$res['book_author'],
+								'book_pub'=>$res['book_pub'],
+								'book_type'=>$res['book_type'],
+								'book_edit'=>$res['book_edit'],
+								'book_price'=>$res['book_price'],
+								'book_pic'=>$res['book_pic'],
+								'book_link'=>$res['book_link'],
+								'book_info'=>$res['book_info'],
+								'favour'=>$res['favour']);
 			$sql="SELECT li.id book_id, book_status FROM booklist li WHERE book_kind = '$bookKind'";
 			//echo $sql."<br/>";
 			$query = mysql_query($sql);
@@ -395,14 +388,17 @@
 				error('sql_error');
 			}
 			else {
+				$book_list = array();
+				$i = 0;
 				while($res = mysql_fetch_array($query)) {
-					$response[$i] = array(  'book_id'=>$res['book_id'],
+					$book_list[$i] = array('book_id'=>$res['book_id'],
 											'book_status'=>$res['book_status']/*,
 											'user_name'=>$res['user_name'],
 											'created_at'=>$res['created_at']*/);			  
 					$i++;
 				}
-				$response = json_encode($response);
+				$array=array('book_detail'=>$book_detail,'book_list'=>$book_list);
+				$response = json_encode($array);
 				echo $response;
 			}
 		}
@@ -415,28 +411,8 @@
 	"book_pic":图书图片,
 	"isLike":是否被赞*/
 	function recentAdd($userId){
-		$sql="SELECT book_kind, book_name, book_status, favour, book_pic, ( SELECT count(*) FROM booklist WHERE book_kind = ba.id ) AS sum, ( SELECT count(*) FROM booklist WHERE book_kind = ba.id AND book_status = '已被借' ) AS rent, CASE ba.id IN ( SELECT book_kind FROM booklike WHERE user_id = '$userId' ) WHEN FALSE THEN '0' ELSE '1' END AS isLike FROM booklist li JOIN bookbasic ba ON li.book_kind = ba.id WHERE book_time IN ( SELECT max(book_time) FROM booklist ) ORDER BY book_time";
-		//echo $sql."<br/>";
-		$query = mysql_query($sql);
-		$response = array();
-		if(!$query) {
-			error('sql_error');
-		}
-		else {
-			$i = 0;
-			while($res = mysql_fetch_array($query)) {
-				$book_status="共有".$res['sum']."本,已借出".$res['rent']."本";
-				$response[$i] = array(  'book_kind'=>$res['book_kind'],
-										'book_name'=>$res['book_name'],
-										'book_status'=>$book_status,
-										'favour'=>$res['favour'],
-										'book_pic'=>$res['book_pic'],
-										'isLike'=>$res['isLike']);			  
-				$i++;
-			}
-			$response = json_encode($response);
-			echo $response;
-		}
+		$sql="SELECT book_kind, book_name,book_author, book_status, favour, book_pic, ( SELECT count(*) FROM booklist WHERE book_kind = ba.id ) AS sum, ( SELECT count(*) FROM booklist WHERE book_kind = ba.id AND book_status = '已被借' ) AS rent, CASE ba.id IN ( SELECT book_kind FROM booklike WHERE user_id = '$userId' ) WHEN FALSE THEN '0' ELSE '1' END AS isLike FROM booklist li JOIN bookbasic ba ON li.book_kind = ba.id WHERE book_time IN ( SELECT max(book_time) FROM booklist ) ORDER BY book_time";
+		sql2response_book_outline($sql,false);
 	}
 	//用于搜索与获取图书列表(kind)
 	/*"book_kind":书本kind,
@@ -448,7 +424,7 @@
 	function search($userId,$flag,$type,$page_size,$offset,$keyword){
 		$turn="";
 		$where="";
-		$sql="SELECT DISTINCT li.book_kind AS book_kind, book_name, ( SELECT count(*) FROM booklist WHERE book_kind = ba.id ) AS sum, ( SELECT count(*) FROM booklist WHERE book_kind = ba.id AND book_status = '已被借' ) AS rent, favour, book_pic, CASE ba.id IN ( SELECT book_kind FROM booklike WHERE user_id = '$userId' ) WHEN FALSE THEN '0' ELSE '1' END AS isLike FROM bookbasic ba JOIN booklist li ON ba.id = li.book_kind ";
+		$sql="SELECT DISTINCT li.book_kind AS book_kind, book_name,book_author, ( SELECT count(*) FROM booklist WHERE book_kind = ba.id ) AS sum, ( SELECT count(*) FROM booklist WHERE book_kind = ba.id AND book_status = '已被借' ) AS rent, favour, book_pic, CASE ba.id IN ( SELECT book_kind FROM booklike WHERE user_id = '$userId' ) WHEN FALSE THEN '0' ELSE '1' END AS isLike FROM bookbasic ba JOIN booklist li ON ba.id = li.book_kind ";
 		if($keyword==''){//获取列表
 			if(!$flag){//用户
 				$where=" where book_status in ('已被借','未被借') ";
@@ -471,31 +447,11 @@
 			
 		}
 		$sql=$sql.$where." order by book_kind";
-		if(!$page_size==''){
+		if(!$offset<0){
 			$turn=" LIMIT $page_size OFFSET $offset ";
 		}
 		$sql=$sql.$turn;
-		//echo $sql."<br/>";
-		$query = mysql_query($sql);
-		$response = array();
-		if(!$query) {
-			error('sql_error');
-		}
-		else {
-			$i = 0;
-			while($res = mysql_fetch_array($query)) {
-				$book_status="共有".$res['sum']."本,已借出".$res['rent']."本";
-				$response[$i] = array(  'book_kind'=>$res['book_kind'],
-										'book_name'=>$res['book_name'],
-										'book_status'=>$book_status,
-										'favour'=>$res['favour'],
-										'book_pic'=>$res['book_pic'],
-										'isLike'=>$res['isLike']);			  
-				$i++;
-			}
-			$response = json_encode($response);
-			echo $response;
-		}
+		sql2response_book_outline($sql,false);
 	}
 	/*------------用户------------*/
 	//注册
@@ -531,29 +487,13 @@
 	"created_at":借阅时间,
 	"return_at":剩余天数*/
 	function usershow($userId,$page_size,$offset){//增加显示借阅时间、剩余时间
-		$sql="SELECT ba.id AS book_kind, book_name, CASE updated_at WHEN '0000-00-00' THEN '未还' ELSE '已还' END AS book_status, favour, book_pic, CASE ba.id IN ( SELECT book_kind FROM booklike WHERE user_id = '$userId' ) WHEN FALSE THEN '0' ELSE '1' END AS isLike, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li JOIN bookbasic ba ON li.book_kind = ba.id JOIN bookcirculate cir ON li.id = cir.book_id WHERE cir.user_id = '$userId' ORDER BY book_kind LIMIT $page_size OFFSET $offset";
-		//echo $sql."<br/>";
-		$query = mysql_query($sql);
-		$response = array();
-		if(!$query) {
-			error('sql_error');
+		$turn="";
+		if(!$offset<0){
+			$turn=" LIMIT $page_size OFFSET $offset ";
 		}
-		else {
-			$i = 0;
-			while($res = mysql_fetch_array($query)) {
-				$response[$i] = array(  'book_kind'=>$res['book_kind'],
-										'book_name'=>$res['book_name'],
-										'book_status'=>$res['book_status'],
-										'favour'=>$res['favour'],
-										'book_pic'=>$res['book_pic'],
-										'isLike'=>$res['isLike'],
-										'created_at'=>$res['created_at'],
-										'return_at'=>$res['return_at']);		  
-				$i++;
-			}
-			$response = json_encode($response);
-			echo $response;
-		}
+		$sql="SELECT ba.id AS book_kind, book_name,book_author, CASE updated_at WHEN '0000-00-00' THEN '未还' ELSE '已还' END AS book_status, favour, book_pic, CASE ba.id IN ( SELECT book_kind FROM booklike WHERE user_id = '$userId' ) WHEN FALSE THEN '0' ELSE '1' END AS isLike, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li JOIN bookbasic ba ON li.book_kind = ba.id JOIN bookcirculate cir ON li.id = cir.book_id WHERE cir.user_id = '$userId' ORDER BY book_kind LIMIT $page_size OFFSET $offset";
+		$sql=$sql.$turn;
+		sql2response_book_outline($sql,true);
 	}
 	/*------------管理------------*/
 	//完成书的return
@@ -672,8 +612,13 @@
 	"created_at":借阅时间,
 	"return_at":剩余天数*/
 	function adminshow($page_size,$offset){//增加显示借阅人、借书时间、剩余天数（30天）
-		$sql="SELECT li.id AS book_id, book_name, book_status, `user`.user_name, favour, book_pic, CASE ba.id IN ( SELECT book_kind FROM booklike WHERE user_id = '12108238' ) WHEN FALSE THEN '0' ELSE '1' END AS isLike, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li LEFT JOIN bookbasic ba ON li.book_kind = ba.id LEFT JOIN bookcirculate cir ON cir.book_id = li.id LEFT JOIN `user` ON `user`.user_id = cir.user_id WHERE book_status = '已被借' AND cir.updated_at = '0000-00-00' ORDER BY book_id LIMIT $page_size OFFSET $offset";
+		$turn="";
+		if(!$offset<0){
+			$turn=" LIMIT $page_size OFFSET $offset ";
+		}
+		$sql="SELECT li.id AS book_id, book_name, book_status, `user`.user_name, favour, book_pic,  created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li LEFT JOIN bookbasic ba ON li.book_kind = ba.id LEFT JOIN bookcirculate cir ON cir.book_id = li.id LEFT JOIN `user` ON `user`.user_id = cir.user_id WHERE book_status = '已被借' AND cir.updated_at = '0000-00-00' ORDER BY book_id";
 		//echo $sql."<br/>";
+		$sql=$sql.$turn;
 		$query = mysql_query($sql);
 		$response = array();
 		if(!$query) {
@@ -688,7 +633,6 @@
 										'user_name'=>$res['user_name'],
 										'favour'=>$res['favour'],
 										'book_pic'=>$res['book_pic'],
-										'isLike'=>$res['isLike'],
 										'created_at'=>$res['created_at'],
 										'return_at'=>$res['return_at']);			  
 				$i++;
@@ -736,6 +680,87 @@
 
 	/*----------工具函数----------*/
 
+	//验证管理员身份
+	function adminverify($xuserId,$xpassword){
+		if(!identity('user','user_rank','图书管理','user_id',$xuserId)){
+			error('rankverify_error');
+		}
+		else{
+			$xpassword=setSecret($xpassword);
+			if(!identity('user','user_id',$xuserId,'user_password',$xpassword)){
+				error('verify_error');
+			}
+			else{
+				return 1;
+			}
+		}
+	}
+	//将sql语句结果输出
+	function sql2response_book_outline($sql,$isTime){
+		echo $sql."<br/>";
+		$query = mysql_query($sql);
+		if(!$query) {
+			error('sql_error');
+		}
+		else {
+			$i = 0;
+			$response = array();
+			while($res = mysql_fetch_array($query)) {
+				!$isTime?
+				$book_status="共有".$res['sum']."本,已借出".$res['rent']."本":
+				$book_status=$res['book_status'];
+				$book_detail_url=url."/public/detail/$res[book_kind]";
+				if(!$isTime){
+					$response[$i] = array(  'book_detail_url'=>$book_detail_url,
+											'book_name'=>$res['book_name'],
+											'book_author'=>$res['book_author'],
+											'book_status'=>$book_status,
+											'favour'=>$res['favour'],
+											'book_pic'=>$res['book_pic'],
+											'isLike'=>$res['isLike']);		
+				}
+				else{
+					$response[$i] = array(  'book_detail_url'=>$book_detail_url,
+										'book_name'=>$res['book_name'],
+										'book_author'=>$res['book_author'],
+										'book_status'=>$book_status,
+										'favour'=>$res['favour'],
+										'book_pic'=>$res['book_pic'],
+										'isLike'=>$res['isLike'],
+										'created_at'=>$res['created_at'],
+										'return_at'=>$res['return_at']);
+				}		  
+				$i++;
+			}
+			$response = json_encode($response);
+			echo $response;
+		}
+		/*//echo $sql."<br/>";
+		$query = mysql_query($sql);
+		if(!$query) {
+			error('sql_error');
+		}
+		else {
+			$i = 0;
+			$response = array();
+			while($res = mysql_fetch_array($query)) {
+				$book_status="共有".$res['sum']."本,已借出".$res['rent']."本";
+				$book_detail_url=url."/public/detail/$res[book_kind]";
+				$response[$i] = array(  'book_detail_url'=>$book_detail_url,
+										'book_name'=>$res['book_name'],
+										'book_author'=>$res['book_author'],
+										'book_status'=>$book_status,
+										'favour'=>$res['favour'],
+										'book_pic'=>$res['book_pic'],
+										'isLike'=>$res['isLike'],
+										'created_at'=>$res['created_at'],
+										'return_at'=>$res['return_at']);		  
+				$i++;
+			}
+			$response = json_encode($response);
+			echo $response;
+		}*/
+	}
 	//验证唯一性
 	function identity($table,$row1,$value1,$row2,$value2){
 		$value2!=''&&$row2!=''?$sql="select count(*) from $table where $row1='$value1' and $row2='$value2'":$sql="select count(*) from $table where $row1='$value1'";
@@ -762,21 +787,6 @@
 		$response = array($from=>$res[$to]);
 		$response = json_encode($response);
 		echo $response;
-	}
-	//验证管理员身份
-	function adminverify($xuserId,$xpassword){
-		if(!identity('user','user_rank','图书管理','user_id',$xuserId)){
-			error('rankverify_error');
-		}
-		else{
-			$xpassword=setSecret($xpassword);
-			if(!identity('user','user_id',$xuserId,'user_password',$xpassword)){
-				error('verify_error');
-			}
-			else{
-				return 1;
-			}
-		}
 	}
 	//向外输出错误信息
 	function error($type){
