@@ -147,7 +147,7 @@
 	//（已验证）GET获取图书列表http://localhost/webservice/book/API.php/normal/search/12108413/5/page=1/all
 	$app->get('/normal/search/:userId/:type/page=:page/:keyword', function ($xuserId,$xtype,$xpage,$xkeyword) {
 		if($xtype=='5')
-			$xkeyword='';//~~~~~必须要传$xkeyword不然无法访问，将input中空值自动变为all
+			$xkeyword='';
 		$page_size=pagesize;
 		$offset=($xpage-1)*$page_size;
 		require 'conn.php';
@@ -251,8 +251,8 @@
 		}
 		mysql_close($con);
 	});
-	//（已验证）POST修改图书信息http://localhost/webservice/book/API.php/admin/update/12108238/100/12108238
-	$app->post('/admin/update/:bookKin/:userIdd/:password', function ($xbookKind,$xuserId,$xpassword) {
+	//（已验证）GET修改图书为已超期http://localhost/webservice/book/API.php/admin/alter/100/12108238/12108238
+	$app->get('/admin/alter/:bookId/:userId/:password', function ($xbookId,$xuserId,$xpassword) {
 		require 'conn.php';
 		global $app;
 		$req = $app->request(); 
@@ -260,36 +260,40 @@
 		$request = json_decode($postdata);
 		$IsJson="";
 		is_json($postdata)?$IsJson=true:$IsJson=false;
-		$book_name = getPost($req,$request,$IsJson,'bookName');
-		$book_author = getPost($req,$request,$IsJson,'bookAuthor');
-		$book_pub = getPost($req,$request,$IsJson,'bookPub');
-		$book_type = getPost($req,$request,$IsJson,'bookType');
-		$book_edit = getPost($req,$request,$IsJson,'bookEdit');
-		$book_price = getPost($req,$request,$IsJson,'bookPrice');
-		$book_status = getPost($req,$request,$IsJson,'bookStatus');
-		$book_pic = getPost($req,$request,$IsJson,'bookPic');
-		$book_link = getPost($req,$request,$IsJson,'bookLink');
-		$book_info = getPost($req,$request,$IsJson,'bookInfo');
 		if(adminverify($xuserId,$xpassword)){
-			update($xbookId,$book_name,$book_author,$book_pub,$book_type,$book_edit,$book_price,$book_status,$book_pic,$book_link,$book_info);
+			alter($xbookId);
+		}
+		mysql_close($con);
+	});
+	//（已验证）GET更新图书资料http://localhost/webservice/book/API.php/admin/renew/47/9787111358732/12108238/12108238
+	$app->get('/admin/renew/:bookId/:bookIsbn/:userId/:password', function ($xbookId,$xbookIsbn,$xuserId,$xpassword) {
+		require 'conn.php';
+		global $app;
+		$req = $app->request(); 
+		$postdata = file_get_contents("php://input");
+		$request = json_decode($postdata);
+		$IsJson="";
+		is_json($postdata)?$IsJson=true:$IsJson=false;
+		if(adminverify($xuserId,$xpassword)){
+			renew($xbookId,$xbookIsbn);
 		}
 		mysql_close($con);
 	});
 	//（已验证）GET添加图书http://localhost/webservice/book/API.php/admin/add/100/9787111358732/移动端/12108238/12108238
-	$app->get('/admin/add/:bookId/:bookIsbn/:bookType/:userId/:userPassword',function($xbookId,$xbookIsbn,$xbookType,$xuserId,$xpassword){//是否需要确定图书唯一性？
+	$app->get('/admin/add/:bookId/:bookIsbn/:bookType/:userId/:password',function($xbookId,$xbookIsbn,$xbookType,$xuserId,$xpassword){//是否需要确定图书唯一性？
 		require 'conn.php';
 		if(adminverify($xuserId,$xpassword)){
-			identity('booklist','id',$xbookId,'','')?error('id_error'):getIsbn($xbookId,$xbookIsbn,$xbookType);
+			identity('booklist','id',$xbookId,'','')?error('id_error'):getIsbn($xbookId,$xbookIsbn,$xbookType,0);
 		}
 	});
-	/*//（已验证）GET删除图书http://localhost/webservice/book/API.php/admin/delete/100/12108238/12108238
+	//（已验证）GET删除图书http://localhost/webservice/book/API.php/admin/delete/100/12108238/12108238
 	$app->get('/admin/delete/:bookId/:userId/:password', function ($xbookId,$xuserId,$xpassword) {
 		require 'conn.php';
 		if(adminverify($xuserId,$xpassword)){
 			del($xbookId);
 		}
 		mysql_close($con);
-	});*/
+	});
 	//（已验证）GET查看已经借出的图书http://localhost/webservice/book/API.php/admin/showRe/12108238/12108238/page=1
 	$app->get('/admin/showRe/:userId/:password/page=:page', function ($xuserId,$xpassword,$xpage) {
 		require 'conn.php';
@@ -539,7 +543,7 @@
 	/*------------管理------------*/
 	//完成书的return
 	function confirm($bookId){
-		if(!identity('booklist','id',$bookId,'book_status','已被借')){
+		if(!identity('booklist','id',$bookId,'book_status !','未被借')){
 			error('bookverify_error');
 		}
 		else{
@@ -558,23 +562,60 @@
 			}
 		} 
 	}
-	//更新图书数据
-	function update($bookKind,$bookName,$bookAuthor,$bookPub,$bookType,$bookEdit,$bookPrice,$bookStatus,$bookPic,$bookLink,$bookInfo){
-		$sql="update bookbasic set book_name='$bookName',book_author='$bookAuthor',book_pub='$bookPub',book_type='$bookType',book_edit='$bookEdit',book_price='$bookPrice',book_pic='$bookPic',book_link='$bookLink',book_info='$bookInfo' where id=$bookKind";
-		$query = mysql_query($sql);//更新bookbasic
+	//设置图书为已超期
+	function alter($bookId){
+		if(!identity('booklist','book_status','已被借','id',$bookId)){
+			error('bookverify_error');
+		}
+		else{
+			if(identity('bookcirculate','updated_at','0000-00-00','book_id',$bookId)){
+				error('bookverify_error');
+			}
+			else{
+				$sql="update booklist set book_status='已超期' where id=$bookId";
+				$query = mysql_query($sql);//更新bookbasic
+				//echo $sql."<br/>";
+				!$query?error('sql_error'):found();
+			}
+		}
+	}
+	//更新图书数据准备
+	function renew($bookId,$bookIsbn){
+		$sql="select DISTINCT book_type from bookbasic ba,booklist li where ba.id=li.book_kind and li.book_kind='$bookId'";//查出书在数据库中的类型填写getIsbn
+		$query = mysql_query($sql);
 		//echo $sql."<br/>";
 		if(!$query){
 			error('sql_error');
 		}
 		else{
-			$sql="update booklist set book_status='$bookStatus' where book_kind='$bookKind'";
-			$query = mysql_query($sql);//更新booklist
-			//echo $sql."<br/>";
-			!$query?error('sql_error'):found();
+			$res=mysql_fetch_array($query);
+			$bookType=$res['book_type'];//要求表中bookId与填入的bookIsbn对应
+			/*!identity('bookbasic','id',$bookId,'book_isbn',$bookIsbn)?error('bookverify_error'):*/getIsbn($bookId,$bookIsbn,$bookType,1);
 		}
 	}
+	//更新图书数据
+	function update($bookId,$bookIsbn,$bookName,$bookAuthor,$bookType,$bookPic,$bookEdit,$bookPrice,$bookPub,$bookInfo,$bookLink){//要求表中bookName与填入的bookIsbn对应
+		/*$sql="select count(*) from bookbasic ba join booklist li on li.book_kind=ba.id where book_name='$bookName' and book_isbn='$bookIsbn'";
+		$query = mysql_query($sql);
+		echo $sql."<br/>";
+		if(!$query){
+			error('sql_error');
+		}
+		else{
+			$res=mysql_fetch_array($query);
+			if($res['count(*)']==0){
+				error('bookverify_error');
+			}
+			else{*/
+				$sql="UPDATE bookbasic set book_isbn='$bookIsbn',book_name='$bookName',book_author='$bookAuthor',book_type='$bookType',book_pic='$bookPic',book_edit='$bookEdit',book_price='$bookPrice',book_pub='$bookPub',book_info='$bookInfo',book_link='$bookLink' where id='$bookId'";
+				$query = mysql_query($sql);
+				//echo $sql.'<br/>';
+				!$query?error('sql_error'):found();
+			/*}
+		}*/
+	}
 	//关联isbn与id
-    function getIsbn($bookId,$bookIsbn,$bookType){//book_name book_author book_pub book_type book_edit book_price book_info
+    function getIsbn($bookId,$bookIsbn,$bookType,$IsRenew){//book_name book_author book_pub book_type book_edit book_price book_info
     	$curl = curl_init('https://api.douban.com/v2/book/isbn/:'.$bookIsbn); 
 		curl_setopt($curl, CURLOPT_FAILONERROR, true); 
 		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true); 
@@ -604,47 +645,76 @@
  		//echo $bookInfo;
  		$bookLink=$arr['alt'];
  		//echo $bookInfo;
- 		if(!identity('bookbasic','book_isbn',$bookIsbn,'','')){
-    		add($bookId,$bookIsbn,$bookName,$bookAuthor,$bookType,$bookPic,$bookEdit,$bookPrice,$bookPub,$bookInfo,$bookLink);
-    	}
-    	else{
-	 		add_insert_booklist($bookId,$bookIsbn);
-    	}
+ 		if($IsRenew){//更新
+ 			update($bookId,$bookIsbn,$bookName,$bookAuthor,$bookType,$bookPic,$bookEdit,$bookPrice,$bookPub,$bookInfo,$bookLink);
+ 		}
+ 		else{//添加
+	 		if(!identity('bookbasic','book_isbn',$bookIsbn,'','')){//basic中不存在两张表中add
+	    		add($bookId,$bookIsbn,$bookName,$bookAuthor,$bookType,$bookPic,$bookEdit,$bookPrice,$bookPub,$bookInfo,$bookLink);
+	    	}
+	    	else{//basic中存在只在一张表中add
+		 		add_insert_booklist($bookId,$bookIsbn);
+	    	}
+ 		}
     }
 	//添加图书数据
 	function add($bookId,$bookIsbn,$bookName,$bookAuthor,$bookType,$bookPic,$bookEdit,$bookPrice,$bookPub,$bookInfo,$bookLink){
 		$sql="insert bookbasic ($bookId,book_isbn,book_name,book_author,book_type,book_edit,book_price,book_pub,book_info) values ('$bookId',$bookIsbn','$bookName','$bookAuthor','$bookType','$bookEdit','$bookPrice','$bookPub','$bookInfo')";
 		$query = mysql_query($sql);//bookbasic插入图书数据
-		//echo $sql.'<br/>';
+		///echo $sql.'<br/>';
 		!$query?error('sql_error'):add_insert_booklist($bookIsbn);
 	}
 	//向booklist中插入数据
 	function add_insert_booklist($bookId,$bookIsbn){
 		$buyTime = date('Y-m-d');
-		$sql="INSERT booklist (id,book_kind, book_time) VALUE ($bookId,( SELECT id FROM bookbasic WHERE book_isbn = '$bookIsbn' ),'$buyTime')";
+		$sql="INSERT booklist (id,book_kind, book_time) VALUE ('$bookId',( SELECT id FROM bookbasic WHERE book_isbn = '$bookIsbn' ),'$buyTime')";
 		$query = mysql_query($sql);
 		//echo $sql.'<br/>';
 		!$query?error('sql_error'):found();
 	}
+
 	//删除图书数据
 	function del($bookId){//从bookbasic删除数据
-		identity('booklist','book_kind',$bookId);
-		$sql="delete from bookbasic where id='$bookId'";
+		$sql="select book_kind from booklist where id='$bookId'";
 		$query = mysql_query($sql);
 		//echo $sql."<br/>";
-		if(!$query) {
+		if(!$query){
 			error('sql_error');
 		}
-		else {//从booklist删除数据
-			$sql="delete from booklist where book_id='$bookId'";
+		else{
+			$res=mysql_fetch_array($query);
+			$bookKind=$res['book_kind'];
+			$sql="delete from booklist where id='$bookId'";
 			$query = mysql_query($sql);
 			//echo $sql."<br/>";
-			!$query?error('sql_error'):found();
+			if(!$query){
+				error('sql_error');
+			}else{
+				$sql="delete from bookcirculate where book_id='$bookId'";
+				$query = mysql_query($sql);
+				//echo $sql."<br/>";
+				if(!$query){
+					error('sql_error');
+				}else{
+					if(identity('booklist','book_kind',$bookKind,'','')){//找到重复不删除bookbasic
+						found();
+					}
+					else{
+						$sql="delete from bookbasic where id='$bookKind'";
+						$query = mysql_query($sql);
+						//echo $sql."<br/>";
+						!$query?error('sql_error'):found();
+					}
+				}
+					
+			}
 		}
+
 	}
 	//查看已借出的书
 	/*"book_kind":书本kind,
 	"book_name":书本名称,
+	"boou_author":作者,
 	"book_status":书本状态,
 	"user_name":借阅人,
 	"favour":点赞数,
@@ -656,7 +726,7 @@
 		if(!$offset<0){
 			$turn=" LIMIT $page_size OFFSET $offset ";
 		}
-		$sql="SELECT li.id AS book_id, book_name, book_status, `user`.user_name, favour, book_pic,  created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li LEFT JOIN bookbasic ba ON li.book_kind = ba.id LEFT JOIN bookcirculate cir ON cir.book_id = li.id LEFT JOIN `user` ON `user`.user_id = cir.user_id WHERE book_status = '已被借' AND cir.updated_at = '0000-00-00' ORDER BY book_id";
+		$sql="SELECT li.id AS book_id, book_name,book_author, book_status, `user`.user_name, favour, book_pic,  created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li LEFT JOIN bookbasic ba ON li.book_kind = ba.id LEFT JOIN bookcirculate cir ON cir.book_id = li.id LEFT JOIN `user` ON `user`.user_id = cir.user_id WHERE book_status = '已被借' or '已超期' AND cir.updated_at = '0000-00-00' ORDER BY book_id";
 		//echo $sql."<br/>";
 		$sql=$sql.$turn;
 		$query = mysql_query($sql);
@@ -684,6 +754,7 @@
 	//查看已超期图书
 	/*"book_id":书本id,
 	"book_name":书本名称,
+	"boou_author":作者,
 	"book_status":书本状态,
 	"user_name":借阅人,
 	"favour":点赞数,
@@ -691,7 +762,7 @@
 	"created_at":借阅时间,
 	"return_at":剩余天数*/
 	function showOut(){
-		$sql="SELECT li.id as book_id, book_name, book_status, `user`.user_name, favour, book_pic, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li LEFT JOIN bookcirculate cir ON li.id = cir.book_id LEFT JOIN bookbasic ba ON ba.id = li.book_kind LEFT JOIN `user` ON `user`.id = cir.user_id HAVING return_at < 0";
+		$sql="SELECT li.id as book_id, book_name,book_author, book_status, `user`.user_name, favour, book_pic, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li LEFT JOIN bookcirculate cir ON li.id = cir.book_id LEFT JOIN bookbasic ba ON ba.id = li.book_kind LEFT JOIN `user` ON `user`.id = cir.user_id HAVING return_at < 0";
 		//echo $sql."<br/>";
 		$query = mysql_query($sql);
 		$response = array();
@@ -778,7 +849,7 @@
 	}
 	//验证唯一性
 	function identity($table,$row1,$value1,$row2,$value2){
-		$value2!=''&&$row2!=''?$sql="select count(*) from $table where $row1='$value1' and $row2='$value2'":$sql="select count(*) from $table where $row1='$value1'";
+		$value2!=''&&$row2!=''?$sql="select count(*) from $table where $row1= '$value1' and $row2= '$value2'":$sql="select count(*) from $table where $row1= '$value1'";
 		$query = mysql_query($sql);
 		//echo $sql."<br/>";
 		$response = array();
