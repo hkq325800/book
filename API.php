@@ -33,7 +33,7 @@
 		}
 		
 	});
-	//（已验证）POST修改密码http://localhost/webservice/book/API.php/public/passChange   6da788b5325d4e487f38930e2cd90c08/ca8e4dea8b6c7e5dffb81548989ea0b2/ca8e4dea8b6c7e5dffb81548989ea0b2
+	//（已验证）POST修改密码http://localhost/webservice/book/API.php/public/passChange   12108413/12108413/123/123
 	$app->post('/public/passChange',function(){
 		require 'conn.php';
 		global $app;
@@ -56,7 +56,7 @@
 		}
 		mysql_close($con);
 	});
-	//（已验证）GET点赞http://localhost/webservice/book/API.php/public/getLike/1/12108238/6da788b5325d4e487f38930e2cd90c08
+	//（已验证）GET点赞http://localhost/webservice/book/API.php/public/like/1/12108238/12108413
 	$app->get('/public/like/:bookKind/:userId/:password',function($xbookKind,$xuserId,$xpassword){
 		require 'conn.php';
 		if(identity('booklike','user_id',$xuserId,'book_kind',$xbookKind)){
@@ -69,9 +69,9 @@
 		mysql_close($con);
 	});
 	//（已验证）GET书本总数http://localhost/webservice/book/API.php/public/bookSum/0/1/12108413
-	$app->get('/public/bookSum/:flag/:type/:userId',function($flag,$type,$xuserId){//flag决定身份，type决定搜索类型
+	$app->get('/public/bookSum/:IsAdmin/:type/:userId',function($IsAdmin,$type,$xuserId){//flag决定身份，type决定搜索类型
 		require 'conn.php';
-		bookSum($flag,$type,$xuserId);
+		bookSum($IsAdmin,$type,$xuserId);
 		mysql_close($con);
 	});
 	//（已验证）GET返回密码http://localhost/webservice/book/API.php/public/password/12108413
@@ -80,7 +80,7 @@
 	    !identity('user','user_id',$xuserId,'','')?error('verify_error'):password($xuserId);
 	    mysql_close($con);
 	});
-	//（已验证）GET显示图书详细(book_kind->booklist)http://localhost/webservice/book/API.php/public/detail/47/12108413
+	//（已验证）GET显示图书详细(book_kind->booklist)http://localhost/webservice/book/API.php/public/detail/47
 	$app->get('/public/detail/:bookKind',function($xbookKind){
 		require 'conn.php';
 		detail($xbookKind);
@@ -95,7 +95,7 @@
 
 	/*----------用户类----------*/
 
-	//（已验证）POST登录http://localhost/webservice/book/API.php/normal/login   12108413/12345
+	//（已验证）POST登录http://localhost/webservice/book/API.php/normal/login   12108413/12108413
 	$app->post('/normal/login', function () {
 		require 'conn.php';
 		global $app;
@@ -362,7 +362,6 @@
 		$query = mysql_query($sql);
 		//echo $sql."<br/>";
 		!$query?error('sql_error'):query2json($query,'sum','count(*)');
-		/*}*/
 	}
 	//根据user_id返回密码提供校验
 	function password($userId){
@@ -372,20 +371,30 @@
 		!$query?error('sql_error'):query2json($query,'password','user_password');
 	}
 	//根据bookKind返回书本详细
-	/*{	"book_name":书本名称,
-		"book_author":书本作者,
-		"book_pub":书本版次,
-		"book_type":书本类型,
-		"book_edit":书本出版社,
-		"book_price":书本价格,
-		"book_pic":图书图片,
-		"book_link":图书url,
-		"book_info":图书简介
-		"favour":点赞数},
-	  { "id":书本id(booklist),
-		"book_status":书本状态,
-		"user_name":借阅人,
-		"created_at":借阅日期}*/
+	/*{
+    "book_detail": {
+        "book_name": ,
+        "book_author": ,
+        "book_pub": ,
+        "book_type": ,
+        "book_edit": ,
+        "book_price": ,
+        "book_pic": ,
+        "book_link": ,
+        "book_info": ,
+        "favour": 
+    },
+    "book_list": [
+        {
+            "book_id": ,
+            "book_status": 
+        },
+        {
+             ...
+        },
+        ...
+    ]
+	}*/
 	function detail($bookKind){
 		$sql="SELECT book_name,book_author,book_pub,book_type,book_edit,book_price,book_pic,book_link,book_info,favour from bookbasic where id='$bookKind'";
 		//echo $sql."<br/>";
@@ -430,7 +439,9 @@
 	}
 	//返回最近添加的图书
 	/*"book_kind":书本kind,
+	"book_detail_url":书本详细url,
 	"book_name":书本名称,
+	"book_author":书本作者,
 	"book_status":书本状态,
 	"favour":点赞数,
 	"book_pic":图书图片,
@@ -441,7 +452,9 @@
 	}
 	//用于搜索与获取图书列表(kind)
 	/*"book_kind":书本kind,
+	"book_detail_url":书本详细url,
 	"book_name":书本名称,
+	"book_author":书本作者,
 	"book_status":书本状态,
 	"favour":点赞数,
 	"book_pic":图书图片,
@@ -472,10 +485,11 @@
 			
 		}
 		$sql=$sql.$where." order by book_kind";
-		if(!$offset<0){
+		if($offset>=0){
 			$turn=" LIMIT $page_size OFFSET $offset ";
 		}
 		$sql=$sql.$turn;
+		//echo $turn.'<br/>';
 		sql2response_book_outline($sql,false);
 	}
 	/*------------用户------------*/
@@ -504,7 +518,9 @@
 	}
 	//查看曾借过的书
 	/*"book_id":书本kind,
+	"book_detail_url":书本详细url,
 	"book_name":书本名称,
+	"book_author":书本作者,
 	"book_status":书本状态,
 	"favour":点赞数,
 	"book_pic":图书图片,
