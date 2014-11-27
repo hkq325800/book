@@ -18,18 +18,35 @@
 	$app->get('/',function(){
 		echo '<div style="margin-left:550px;margin-top:200px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp欢迎光临<br>=><a href="http://www.baidu.com">www.我爱作死作作死.com</a>=<</div>';
 	});
-
-	//（已验证）POST修改密码http://localhost/webservice/book/API.php/public/passChange/12108238   6da788b5325d4e487f38930e2cd90c08/ca8e4dea8b6c7e5dffb81548989ea0b2/ca8e4dea8b6c7e5dffb81548989ea0b2
-	$app->post('/public/passChange',function(){
-		require 'conn.php';
+	//test
+	$app->post('/',function(){
 		global $app;
 		$req = $app->request(); 
 		$postdata = file_get_contents("php://input");
 		$request = json_decode($postdata);
-		$xuserId = $request->userId;
-		$xoldPass = $request->oldPass;
-		$xnewPass = $request->newPass;
-		$xrenewPass = $request->renewPass;
+		if(is_json($postdata)){
+			echo '蛤蛤';
+		}
+		else{
+			echo '习习';
+			//var_dump($postdata);
+		}
+		
+	});
+	//（已验证）POST修改密码http://localhost/webservice/book/API.php/public/passChange   6da788b5325d4e487f38930e2cd90c08/ca8e4dea8b6c7e5dffb81548989ea0b2/ca8e4dea8b6c7e5dffb81548989ea0b2
+	$app->post('/public/passChange',function(){
+		require 'conn.php';
+		global $app;
+		$req = $app->request();// var_dump($req);
+		$postdata = file_get_contents("php://input");
+		$request = json_decode($postdata);
+		$IsJson="";
+		is_json($postdata)?$IsJson=true:$IsJson=false;
+		$xuserId = getPost($req,$request,$IsJson,'userId');
+		$xoldPass = getPost($req,$request,$IsJson,'oldPass');
+		$xnewPass = getPost($req,$request,$IsJson,'newPass');
+		$xrenewPass = getPost($req,$request,$IsJson,'renewPass');
+		//var_dump($xuserId.'<br/>'.$xoldPass.'<br/>'.$xnewPass.'<br/>'.$xrenewPass);
 		if($xnewPass!=$xrenewPass) 
 			error('password_error');//确定password是否等于repassword
 		else{
@@ -85,8 +102,10 @@
 		$req = $app->request(); 
 		$postdata = file_get_contents("php://input");
 		$request = json_decode($postdata);
-		$xuserId = $request->userId;
-		$xpassword = $request->password;
+		$IsJson="";
+		is_json($postdata)?$IsJson=true:$IsJson=false;
+		$xuserId = getPost($req,$request,$IsJson,'userId');
+		$xpassword = getPost($req,$request,$IsJson,'password');
 		$xpassword = setSecret($xpassword);
 		!identity('user','user_id',$xuserId,'user_password',$xpassword)?error('verify_error'):found();
 		mysql_close($con);
@@ -98,10 +117,12 @@
 		$req = $app->request(); 
 		$postdata = file_get_contents("php://input");
 		$request = json_decode($postdata);
-		$xuserId = $request->userId;
-		$xuserName = $request->userName;
-		$xpassword = $request->password;
-		$xrepassword = $request->rePassword;
+		$IsJson="";
+		is_json($postdata)?$IsJson=true:$IsJson=false;
+		$xuserId = getPost($req,$request,$IsJson,'userId');
+		$xuserName = getPost($req,$request,$IsJson,'userName');
+		$xpassword = getPost($req,$request,$IsJson,'password');
+		$xrepassword = getPost($req,$request,$IsJson,'rePassword');
 		if($xpassword!=$xrepassword) 
 			error('password_error');//确定password是否等于repassword
 		else{
@@ -173,8 +194,10 @@
 		$req = $app->request(); 
 		$postdata = file_get_contents("php://input");
 		$request = json_decode($postdata);
-		$xuserId = $request->userId;
-		$xpassword = $request->password;
+		$IsJson="";
+		is_json($postdata)?$IsJson=true:$IsJson=false;
+		$xuserId = getPost($req,$request,$IsJson,'userId');
+		$xpassword = getPost($req,$request,$IsJson,'password');
 		if(adminverify($xuserId,$xpassword)){
 			found();
 		}
@@ -235,16 +258,18 @@
 		$req = $app->request(); 
 		$postdata = file_get_contents("php://input");
 		$request = json_decode($postdata);
-		$book_name = $request->bookName;
-		$book_author = $request->bookAuthor;
-		$book_pub = $request->bookPub;
-		$book_type = $request->bookType;
-		$book_edit = $request->bookEdit;
-		$book_price = $request->bookPrice;
-		$book_status = $request->bookStatus;//
-		$book_pic = $request->bookPic;
-		$book_link = $request->bookLink;
-		$book_info = $request->bookInfo;
+		$IsJson="";
+		is_json($postdata)?$IsJson=true:$IsJson=false;
+		$book_name = getPost($req,$request,$IsJson,'bookName');
+		$book_author = getPost($req,$request,$IsJson,'bookAuthor');
+		$book_pub = getPost($req,$request,$IsJson,'bookPub');
+		$book_type = getPost($req,$request,$IsJson,'bookType');
+		$book_edit = getPost($req,$request,$IsJson,'bookEdit');
+		$book_price = getPost($req,$request,$IsJson,'bookPrice');
+		$book_status = getPost($req,$request,$IsJson,'bookStatus');
+		$book_pic = getPost($req,$request,$IsJson,'bookPic');
+		$book_link = getPost($req,$request,$IsJson,'bookLink');
+		$book_info = getPost($req,$request,$IsJson,'bookInfo');
 		if(adminverify($xuserId,$xpassword)){
 			update($xbookId,$book_name,$book_author,$book_pub,$book_type,$book_edit,$book_price,$book_status,$book_pic,$book_link,$book_info);
 		}
@@ -608,7 +633,6 @@
 	"user_name":借阅人,
 	"favour":点赞数,
 	"book_pic":图书图片,
-	"isLike":是否被赞,
 	"created_at":借阅时间,
 	"return_at":剩余天数*/
 	function adminshow($page_size,$offset){//增加显示借阅人、借书时间、剩余天数（30天）
@@ -648,11 +672,10 @@
 	"user_name":借阅人,
 	"favour":点赞数,
 	"book_pic":图书图片,
-	"isLike":是否被赞,
 	"created_at":借阅时间,
 	"return_at":剩余天数*/
 	function showOut(){
-		$sql="SELECT li.id as book_id, book_name, book_status, `user`.user_name, favour, book_pic, CASE ba.id IN ( SELECT book_kind FROM booklike WHERE user_id = '12108238' ) WHEN FALSE THEN '0' ELSE '1' END AS isLike, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li LEFT JOIN bookcirculate cir ON li.id = cir.book_id LEFT JOIN bookbasic ba ON ba.id = li.book_kind LEFT JOIN `user` ON `user`.id = cir.user_id HAVING return_at < 0";
+		$sql="SELECT li.id as book_id, book_name, book_status, `user`.user_name, favour, book_pic, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li LEFT JOIN bookcirculate cir ON li.id = cir.book_id LEFT JOIN bookbasic ba ON ba.id = li.book_kind LEFT JOIN `user` ON `user`.id = cir.user_id HAVING return_at < 0";
 		//echo $sql."<br/>";
 		$query = mysql_query($sql);
 		$response = array();
@@ -668,7 +691,6 @@
 										'user_name'=>$res['user_name'],
 										'favour'=>$res['favour'],
 										'book_pic'=>$res['book_pic'],
-										'isLike'=>$res['isLike'],
 										'created_at'=>$res['created_at'],
 										'return_at'=>$res['return_at']);			  
 				$i++;
@@ -697,7 +719,7 @@
 	}
 	//将sql语句结果输出
 	function sql2response_book_outline($sql,$isTime){
-		echo $sql."<br/>";
+		//echo $sql."<br/>";
 		$query = mysql_query($sql);
 		if(!$query) {
 			error('sql_error');
@@ -711,7 +733,8 @@
 				$book_status=$res['book_status'];
 				$book_detail_url=url."/public/detail/$res[book_kind]";
 				if(!$isTime){
-					$response[$i] = array(  'book_detail_url'=>$book_detail_url,
+					$response[$i] = array(  'book_kind'=>$res['book_kind'],
+											'book_detail_url'=>$book_detail_url,
 											'book_name'=>$res['book_name'],
 											'book_author'=>$res['book_author'],
 											'book_status'=>$book_status,
@@ -720,46 +743,22 @@
 											'isLike'=>$res['isLike']);		
 				}
 				else{
-					$response[$i] = array(  'book_detail_url'=>$book_detail_url,
-										'book_name'=>$res['book_name'],
-										'book_author'=>$res['book_author'],
-										'book_status'=>$book_status,
-										'favour'=>$res['favour'],
-										'book_pic'=>$res['book_pic'],
-										'isLike'=>$res['isLike'],
-										'created_at'=>$res['created_at'],
-										'return_at'=>$res['return_at']);
+					$response[$i] = array(  'book_kind'=>$res['book_kind'],
+											'book_detail_url'=>$book_detail_url,
+											'book_name'=>$res['book_name'],
+											'book_author'=>$res['book_author'],
+											'book_status'=>$book_status,
+											'favour'=>$res['favour'],
+											'book_pic'=>$res['book_pic'],
+											'isLike'=>$res['isLike'],
+											'created_at'=>$res['created_at'],
+											'return_at'=>$res['return_at']);
 				}		  
 				$i++;
 			}
 			$response = json_encode($response);
 			echo $response;
 		}
-		/*//echo $sql."<br/>";
-		$query = mysql_query($sql);
-		if(!$query) {
-			error('sql_error');
-		}
-		else {
-			$i = 0;
-			$response = array();
-			while($res = mysql_fetch_array($query)) {
-				$book_status="共有".$res['sum']."本,已借出".$res['rent']."本";
-				$book_detail_url=url."/public/detail/$res[book_kind]";
-				$response[$i] = array(  'book_detail_url'=>$book_detail_url,
-										'book_name'=>$res['book_name'],
-										'book_author'=>$res['book_author'],
-										'book_status'=>$book_status,
-										'favour'=>$res['favour'],
-										'book_pic'=>$res['book_pic'],
-										'isLike'=>$res['isLike'],
-										'created_at'=>$res['created_at'],
-										'return_at'=>$res['return_at']);		  
-				$i++;
-			}
-			$response = json_encode($response);
-			echo $response;
-		}*/
 	}
 	//验证唯一性
 	function identity($table,$row1,$value1,$row2,$value2){
@@ -781,12 +780,27 @@
 			}
 		}
 	}
+	//获取post数据
+	function getPost($req,$request,$IsJson,$name){
+		//var_dump($IsJson);
+		if($IsJson){//json
+			return $request->$name;
+		}
+		else{//nojson
+			return $req->params($name);
+		}
+	}
 	//将查询结果(单个)json输出
 	function query2json($query,$from,$to){
 		$res = mysql_fetch_array($query);
 		$response = array($from=>$res[$to]);
 		$response = json_encode($response);
 		echo $response;
+	}
+	//判断post数据是否为json
+	function is_json($string) {
+		json_decode($string);
+		return (json_last_error() == JSON_ERROR_NONE);
 	}
 	//向外输出错误信息
 	function error($type){
