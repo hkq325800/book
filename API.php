@@ -11,9 +11,9 @@
 	header("Access-Control-Allow-Methods: 'GET'");
 	header("Access-Control-Allow-Methods: 'POST'");
 	header("Access-Control-Max-Age: '60'");
-
-	/*----------通用类----------*/
-
+	/**
+	//----------通用类----------
+	**/
 	//test
 	$app->get('/',function(){
 		echo '<div style="margin-left:550px;margin-top:200px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp欢迎光临<br>=><a href="http://www.baidu.com">www.我爱作死作作死.com</a>=<</div>';
@@ -92,9 +92,9 @@
 		!identity('user','user_id',$xuserId,'','')?error('verify_error'):recentAdd($xuserId);
 		mysql_close($con);
 	});
-
-	/*----------用户类----------*/
-
+	/**
+	//----------用户类----------
+	**/
 	//（已验证）POST登录http://localhost/webservice/book/API.php/normal/login   12108413/12108413
 	$app->post('/normal/login', function () {
 		require 'conn.php';
@@ -184,9 +184,9 @@
 		!identity('user','user_id',$xuserId,'user_password',$xpassword)?error('verify_error'):usershow($xuserId,$page_size,$offset);
 		mysql_close($con);
 	});
-
-	/*----------管理类----------*/
-
+	/**
+	//----------管理类----------
+	**/
 	//（已验证）POST登录http://localhost/webservice/book/API.php/admin/login   12108238/12108238
 	$app->post('/admin/login', function () {
 		require 'conn.php';
@@ -313,13 +313,13 @@
 		}
 		mysql_close($con);
 	});
-
-	/*----------程序入口----------*/
-
+	/**
+	//----------程序入口----------
+	**/
 	$app->run();
-
-	/*----------处理函数----------*/
-	/*------------公共------------*/
+	/**
+	//----------通用类----------公共------------
+	**/
 	//用于更改密码
 	function passChange($userId,$password){
 		$sql="update user set user_password='$password' where user_id='$userId'";
@@ -499,7 +499,9 @@
 		//echo $turn.'<br/>';
 		sql2response_book_outline($sql,false);
 	}
-	/*------------用户------------*/
+	/**
+	//----------用户类----------
+	**/
 	//注册
 	function register($userId,$userName,$password){
 		$sql="insert into user (user_id,user_name,user_password) values ('$userId','$userName','$password')";
@@ -536,14 +538,17 @@
 	"return_at":剩余天数*/
 	function usershow($userId,$page_size,$offset){//增加显示借阅时间、剩余时间
 		$turn="";
-		if(!$offset<0){
+		if($offset>=0){
 			$turn=" LIMIT $page_size OFFSET $offset ";
 		}
-		$sql="SELECT ba.id AS book_kind, book_name,book_author, CASE updated_at WHEN '0000-00-00' THEN '未还' ELSE '已还' END AS book_status, favour, book_pic, CASE ba.id IN ( SELECT book_kind FROM booklike WHERE user_id = '$userId' ) WHEN FALSE THEN '0' ELSE '1' END AS isLike, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li JOIN bookbasic ba ON li.book_kind = ba.id JOIN bookcirculate cir ON li.id = cir.book_id WHERE cir.user_id = '$userId' ORDER BY book_kind LIMIT $page_size OFFSET $offset";
+		$sql="SELECT ba.id AS book_kind, book_name,book_author, CASE updated_at WHEN '0000-00-00' THEN '未还' ELSE '已还' END AS book_status, favour, book_pic, CASE ba.id IN ( SELECT book_kind FROM booklike WHERE user_id = '$userId' ) WHEN FALSE THEN '0' ELSE '1' END AS isLike, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li JOIN bookbasic ba ON li.book_kind = ba.id JOIN bookcirculate cir ON li.id = cir.book_id WHERE cir.user_id = '$userId' ORDER BY book_kind ";
 		$sql=$sql.$turn;
+		//echo $sql."<br/>";
 		sql2response_book_outline($sql,true);
 	}
-	/*------------管理------------*/
+	/**
+	//----------管理类----------
+	**/
 	//完成书的return
 	function confirm($bookId){
 		if(!identity('booklist','id',$bookId,'book_status !','未被借')){
@@ -726,7 +731,7 @@
 	"return_at":剩余天数*/
 	function adminshow($page_size,$offset){//增加显示借阅人、借书时间、剩余天数（30天）
 		$turn="";
-		if(!$offset<0){
+		if($offset>=0){
 			$turn=" LIMIT $page_size OFFSET $offset ";
 		}
 		$sql="SELECT li.id AS book_id, book_name,book_author, book_status, `user`.user_name, favour, book_pic,  created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li LEFT JOIN bookbasic ba ON li.book_kind = ba.id LEFT JOIN bookcirculate cir ON cir.book_id = li.id LEFT JOIN `user` ON `user`.user_id = cir.user_id WHERE book_status = '已被借' or '已超期' AND cir.updated_at = '0000-00-00' ORDER BY book_id";
@@ -789,9 +794,9 @@
 			echo $response;
 		}
 	}
-
-	/*----------工具函数----------*/
-
+	/**
+	//----------工具函数----------
+	**/
 	//验证管理员身份
 	function adminverify($xuserId,$xpassword){
 		if(!identity('user','user_rank','图书管理','user_id',$xuserId)){
