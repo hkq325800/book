@@ -586,21 +586,21 @@
 	function renew($bookId,$bookIsbn){
 		$sql="select DISTINCT book_type from bookbasic ba,booklist li where ba.id=li.book_kind and li.id='$bookId'";//查出书在数据库中的类型填写getIsbn
 		$query = mysql_query($sql);
-		echo $sql."<br/>";
+		//echo $sql."<br/>";
 		if(!$query){
 			error('sql_error');
 		}
 		else{
 			$res=mysql_fetch_array($query);
-			$bookType=$res['book_type'];//要求表中bookId与填入的bookIsbn对应
-			/*!identity('bookbasic','id',$bookId,'book_isbn',$bookIsbn)?error('bookverify_error'):*/getIsbn($bookId,$bookIsbn,$bookType,1);
+			$bookType=toString($res['book_type']);//要求表中bookId与填入的bookIsbn对应
+			!identity('bookbasic','id',$bookId,'book_isbn',$bookIsbn)?error('isbn_error'):getIsbn($bookId,$bookIsbn,$bookType,1);
 		}
 	}
 	//更新图书数据
 	function update($bookId,$bookIsbn,$bookName,$bookAuthor,$bookType,$bookPic,$bookEdit,$bookPrice,$bookPub,$bookInfo,$bookLink){//要求表中bookName与填入的bookIsbn对应
 		/*$sql="select count(*) from bookbasic ba join booklist li on li.book_kind=ba.id where book_name='$bookName' and book_isbn='$bookIsbn'";
 		$query = mysql_query($sql);
-		echo $sql."<br/>";
+		//echo $sql."<br/>";
 		if(!$query){
 			error('sql_error');
 		}
@@ -652,7 +652,7 @@
  			update($bookId,$bookIsbn,$bookName,$bookAuthor,$bookType,$bookPic,$bookEdit,$bookPrice,$bookPub,$bookInfo,$bookLink);
  		}
  		else{//添加
-	 		if(!identity('bookbasic','book_isbn',$bookIsbn,'','')){//basic中不存在两张表中add
+	 		if(!identity('bookbasic','book_name',$bookName,'','')){//basic中不存在两张表中add
 	    		add($bookIsbn,$bookName,$bookAuthor,$bookType,$bookPic,$bookEdit,$bookPrice,$bookPub,$bookInfo,$bookLink);
 	    	}
 	    	else{//basic中存在只在一张表中add_insert
@@ -662,17 +662,17 @@
     }
 	//添加图书数据
 	function add($bookIsbn,$bookName,$bookAuthor,$bookType,$bookPic,$bookEdit,$bookPrice,$bookPub,$bookInfo,$bookLink){
-		$sql="insert bookbasic (book_isbn,book_name,book_author,book_type,book_edit,book_price,book_pub,book_info) values ($bookIsbn','$bookName','$bookAuthor','$bookType','$bookEdit','$bookPrice','$bookPub','$bookInfo')";
-		//$query = mysql_query($sql);//bookbasic插入图书数据
-		echo $sql.'<br/>';
+		$sql="insert bookbasic (book_isbn,book_name,book_author,book_type,book_edit,book_price,book_pub,book_info) values ('$bookIsbn','$bookName','$bookAuthor','$bookType','$bookEdit','$bookPrice','$bookPub','$bookInfo')";
+		$query = mysql_query($sql);//bookbasic插入图书数据
+		//echo $sql.'<br/>';
 		!$query?error('sql_error'):add_insert_booklist($bookIsbn);
 	}
 	//向booklist中插入数据
 	function add_insert_booklist($bookIsbn){
 		$buyTime = date('Y-m-d');
 		$sql="INSERT booklist (book_kind, book_time) VALUE (( SELECT id FROM bookbasic WHERE book_isbn = '$bookIsbn' ),'$buyTime')";
-		//$query = mysql_query($sql);
-		echo $sql.'<br/>';
+		$query = mysql_query($sql);
+		//echo $sql.'<br/>';
 		!$query?error('sql_error'):found();
 	}
 
@@ -928,6 +928,8 @@
 			case 'id_error':
 				$info="此id已存在于数据库中，如需替换请删除原有信息";
 				break;
+			case 'isbn_error':
+				$info="输入的ISBN不匹配";
 			default:
 				$info="杂七杂八的错误";
 				break;
