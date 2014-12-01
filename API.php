@@ -254,12 +254,12 @@
 	//（已验证）GET修改图书为已超期http://localhost/webservice/book/API.php/admin/alter/100/12108238/12108238
 	$app->get('/admin/alter/:bookId/:userId/:password', function ($xbookId,$xuserId,$xpassword) {
 		require 'conn.php';
-		global $app;
+		/*global $app;
 		$req = $app->request(); 
 		$postdata = file_get_contents("php://input");
 		$request = json_decode($postdata);
 		$IsJson="";
-		is_json($postdata)?$IsJson=true:$IsJson=false;
+		is_json($postdata)?$IsJson=true:$IsJson=false;*/
 		if(adminverify($xuserId,$xpassword)){
 			alter($xbookId);
 		}
@@ -268,22 +268,22 @@
 	//（已验证）GET更新图书资料http://localhost/webservice/book/API.php/admin/renew/47/9787111358732/12108238/12108238
 	$app->get('/admin/renew/:bookId/:bookIsbn/:userId/:password', function ($xbookId,$xbookIsbn,$xuserId,$xpassword) {
 		require 'conn.php';
-		global $app;
+		/*global $app;
 		$req = $app->request(); 
 		$postdata = file_get_contents("php://input");
 		$request = json_decode($postdata);
 		$IsJson="";
-		is_json($postdata)?$IsJson=true:$IsJson=false;
+		is_json($postdata)?$IsJson=true:$IsJson=false;*/
 		if(adminverify($xuserId,$xpassword)){
 			renew($xbookId,$xbookIsbn);
 		}
 		mysql_close($con);
 	});
-	//（已验证）GET添加图书http://localhost/webservice/book/API.php/admin/add/100/9787111358732/移动端/12108238/12108238
-	$app->get('/admin/add/:bookId/:bookIsbn/:bookType/:userId/:password',function($xbookId,$xbookIsbn,$xbookType,$xuserId,$xpassword){//是否需要确定图书唯一性？
+	//（已验证）GET添加图书http://localhost/webservice/book/API.php/admin/add/9787111358732/移动端/12108238/12108238
+	$app->get('/admin/add/:bookIsbn/:bookType/:userId/:password',function($xbookIsbn,$xbookType,$xuserId,$xpassword){
 		require 'conn.php';
 		if(adminverify($xuserId,$xpassword)){
-			identity('booklist','id',$xbookId,'','')?error('id_error'):getIsbn($xbookId,$xbookIsbn,$xbookType,0);
+			getIsbn('',$xbookIsbn,$xbookType,0);
 		}
 	});
 	//（已验证）GET删除图书http://localhost/webservice/book/API.php/admin/delete/100/12108238/12108238
@@ -408,7 +408,10 @@
 		}
 		else {
 			$res = mysql_fetch_array($query);
-			$book_detail = array();
+			foreach ($res as $key => $value) {
+				$res[$key]=toString($res[$key]);
+			}
+			unset($value);
 			$book_detail = array('book_name'=>$res['book_name'],
 								'book_author'=>$res['book_author'],
 								'book_pub'=>$res['book_pub'],
@@ -429,8 +432,8 @@
 				$book_list = array();
 				$i = 0;
 				while($res = mysql_fetch_array($query)) {
-					$book_list[$i] = array('book_id'=>$res['book_id'],
-											'book_status'=>$res['book_status']/*,
+					$book_list[$i] = array('book_id'=>toString($res['book_id']),
+											'book_status'=>toString($res['book_status'])/*,
 											'user_name'=>$res['user_name'],
 											'created_at'=>$res['created_at']*/);			  
 					$i++;
@@ -581,9 +584,9 @@
 	}
 	//更新图书数据准备
 	function renew($bookId,$bookIsbn){
-		$sql="select DISTINCT book_type from bookbasic ba,booklist li where ba.id=li.book_kind and li.book_kind='$bookId'";//查出书在数据库中的类型填写getIsbn
+		$sql="select DISTINCT book_type from bookbasic ba,booklist li where ba.id=li.book_kind and li.id='$bookId'";//查出书在数据库中的类型填写getIsbn
 		$query = mysql_query($sql);
-		//echo $sql."<br/>";
+		echo $sql."<br/>";
 		if(!$query){
 			error('sql_error');
 		}
@@ -607,9 +610,9 @@
 				error('bookverify_error');
 			}
 			else{*/
-				$sql="UPDATE bookbasic set book_isbn='$bookIsbn',book_name='$bookName',book_author='$bookAuthor',book_type='$bookType',book_pic='$bookPic',book_edit='$bookEdit',book_price='$bookPrice',book_pub='$bookPub',book_info='$bookInfo',book_link='$bookLink' where id='$bookId'";
-				$query = mysql_query($sql);
-				//echo $sql.'<br/>';
+				$sql="UPDATE bookbasic set book_isbn='$bookIsbn',book_name='$bookName',book_author='$bookAuthor',book_type='$bookType',book_pic='$bookPic',book_edit='$bookEdit',book_price='$bookPrice',book_pub='$bookPub',book_info='$bookInfo',book_link='$bookLink' where id=(select book_kind from booklist where id='$bookId')";
+				//$query = mysql_query($sql);
+				echo $sql.'<br/>';
 				!$query?error('sql_error'):found();
 			/*}
 		}*/
@@ -650,26 +653,26 @@
  		}
  		else{//添加
 	 		if(!identity('bookbasic','book_isbn',$bookIsbn,'','')){//basic中不存在两张表中add
-	    		add($bookId,$bookIsbn,$bookName,$bookAuthor,$bookType,$bookPic,$bookEdit,$bookPrice,$bookPub,$bookInfo,$bookLink);
+	    		add($bookIsbn,$bookName,$bookAuthor,$bookType,$bookPic,$bookEdit,$bookPrice,$bookPub,$bookInfo,$bookLink);
 	    	}
-	    	else{//basic中存在只在一张表中add
-		 		add_insert_booklist($bookId,$bookIsbn);
+	    	else{//basic中存在只在一张表中add_insert
+		 		add_insert_booklist($bookIsbn);
 	    	}
  		}
     }
 	//添加图书数据
-	function add($bookId,$bookIsbn,$bookName,$bookAuthor,$bookType,$bookPic,$bookEdit,$bookPrice,$bookPub,$bookInfo,$bookLink){
-		$sql="insert bookbasic ($bookId,book_isbn,book_name,book_author,book_type,book_edit,book_price,book_pub,book_info) values ('$bookId',$bookIsbn','$bookName','$bookAuthor','$bookType','$bookEdit','$bookPrice','$bookPub','$bookInfo')";
-		$query = mysql_query($sql);//bookbasic插入图书数据
-		///echo $sql.'<br/>';
+	function add($bookIsbn,$bookName,$bookAuthor,$bookType,$bookPic,$bookEdit,$bookPrice,$bookPub,$bookInfo,$bookLink){
+		$sql="insert bookbasic (book_isbn,book_name,book_author,book_type,book_edit,book_price,book_pub,book_info) values ($bookIsbn','$bookName','$bookAuthor','$bookType','$bookEdit','$bookPrice','$bookPub','$bookInfo')";
+		//$query = mysql_query($sql);//bookbasic插入图书数据
+		echo $sql.'<br/>';
 		!$query?error('sql_error'):add_insert_booklist($bookIsbn);
 	}
 	//向booklist中插入数据
-	function add_insert_booklist($bookId,$bookIsbn){
+	function add_insert_booklist($bookIsbn){
 		$buyTime = date('Y-m-d');
-		$sql="INSERT booklist (id,book_kind, book_time) VALUE ('$bookId',( SELECT id FROM bookbasic WHERE book_isbn = '$bookIsbn' ),'$buyTime')";
-		$query = mysql_query($sql);
-		//echo $sql.'<br/>';
+		$sql="INSERT booklist (book_kind, book_time) VALUE (( SELECT id FROM bookbasic WHERE book_isbn = '$bookIsbn' ),'$buyTime')";
+		//$query = mysql_query($sql);
+		echo $sql.'<br/>';
 		!$query?error('sql_error'):found();
 	}
 
@@ -737,14 +740,14 @@
 		else {
 			$i = 0;
 			while($res = mysql_fetch_array($query)) {
-				$response[$i] = array(  'book_id'=>$res['book_id'],
-										'book_name'=>$res['book_name'],
-										'book_status'=>$res['book_status'],
-										'user_name'=>$res['user_name'],
-										'favour'=>$res['favour'],
-										'book_pic'=>$res['book_pic'],
-										'created_at'=>$res['created_at'],
-										'return_at'=>$res['return_at']);			  
+				$response[$i] = array(  'book_id'=>toString($res['book_id']),
+										'book_name'=>toString($res['book_name']),
+										'book_status'=>toString($res['book_status']),
+										'user_name'=>toString($res['user_name']),
+										'favour'=>toString($res['favour']),
+										'book_pic'=>toString($res['book_pic']),
+										'created_at'=>toString($res['created_at']),
+										'return_at'=>toString($res['return_at']));			  
 				$i++;
 			}
 			$response = json_encode($response);
@@ -772,14 +775,14 @@
 		else {
 			$i = 0;
 			while($res = mysql_fetch_array($query)) {
-				$response[$i] = array(  'book_id'=>$res['book_id'],
-										'book_name'=>$res['book_name'],
-										'book_status'=>$res['book_status'],
-										'user_name'=>$res['user_name'],
-										'favour'=>$res['favour'],
-										'book_pic'=>$res['book_pic'],
-										'created_at'=>$res['created_at'],
-										'return_at'=>$res['return_at']);			  
+				$response[$i] = array(  'book_id'=>toString($res['book_id']),
+										'book_name'=>toString($res['book_name']),
+										'book_status'=>toString($res['book_status']),
+										'user_name'=>toString($res['user_name']),
+										'favour'=>toString($res['favour']),
+										'book_pic'=>toString($res['book_pic']),
+										'created_at'=>toString($res['created_at']),
+										'return_at'=>toString($res['return_at']));			  
 				$i++;
 			}
 			$response = json_encode($response);
@@ -816,30 +819,30 @@
 			$response = array();
 			while($res = mysql_fetch_array($query)) {
 				!$isTime?
-				$book_status="共有".$res['sum']."本,已借出".$res['rent']."本":
+				$book_status="共有".toString($res['sum'])."本,已借出".toString($res['rent'])."本":
 				$book_status=$res['book_status'];
 				$book_detail_url=url."/public/detail/$res[book_kind]";
 				if(!$isTime){
-					$response[$i] = array(  'book_kind'=>$res['book_kind'],
+					$response[$i] = array(  'book_kind'=>toString($res['book_kind']),
 											'book_detail_url'=>$book_detail_url,
-											'book_name'=>$res['book_name'],
-											'book_author'=>$res['book_author'],
+											'book_name'=>toString($res['book_name']),
+											'book_author'=>toString($res['book_author']),
 											'book_status'=>$book_status,
-											'favour'=>$res['favour'],
-											'book_pic'=>$res['book_pic'],
-											'isLike'=>$res['isLike']);		
+											'favour'=>toString($res['favour']),
+											'book_pic'=>toString($res['book_pic']),
+											'isLike'=>toString($res['isLike']));		
 				}
 				else{
-					$response[$i] = array(  'book_kind'=>$res['book_kind'],
-											'book_detail_url'=>$book_detail_url,
-											'book_name'=>$res['book_name'],
-											'book_author'=>$res['book_author'],
-											'book_status'=>$book_status,
-											'favour'=>$res['favour'],
-											'book_pic'=>$res['book_pic'],
-											'isLike'=>$res['isLike'],
-											'created_at'=>$res['created_at'],
-											'return_at'=>$res['return_at']);
+					$response[$i] = array(  'book_kind'=>toString($res['book_kind']),
+											'book_detail_url'=>toString($book_detail_url),
+											'book_name'=>toString($res['book_name']),
+											'book_author'=>toString($res['book_author']),
+											'book_status'=>toString($book_status),
+											'favour'=>toString($res['favour']),
+											'book_pic'=>toString($res['book_pic']),
+											'isLike'=>toString($res['isLike']),
+											'created_at'=>toString($res['created_at']),
+											'return_at'=>toString($res['return_at']));
 				}		  
 				$i++;
 			}
@@ -888,6 +891,12 @@
 	function is_json($string) {
 		json_decode($string);
 		return (json_last_error() == JSON_ERROR_NONE);
+	}
+	//null转为string
+	function toString($string){
+		if($string ==null)
+			return "";
+		else return $string;
 	}
 	//向外输出错误信息
 	function error($type){
