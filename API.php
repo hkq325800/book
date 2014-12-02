@@ -639,7 +639,7 @@
  		foreach ($arr['author'] as $key => $value) {
  			//var_dump($value);
  			$bookAuthor=$bookAuthor.$value;
- 		}
+ 		}unset($value);
  		//echo $bookAuthor;
  		$bookPic=$arr['image'];
  		//echo $bookPpic;
