@@ -617,21 +617,22 @@
 			else{*/
 				$sql="UPDATE bookbasic set book_isbn='$bookIsbn',book_name='$bookName',book_author='$bookAuthor',book_type='$bookType',book_pic='$bookPic',book_edit='$bookEdit',book_price='$bookPrice',book_pub='$bookPub',book_info='$bookInfo',book_link='$bookLink' where id=(select book_kind from booklist where id='$bookId')";
 				//$query = mysql_query($sql);
-				echo $sql.'<br/>';
+				//echo $sql.'<br/>';
 				!$query?error('sql_error'):found();
 			/*}
 		}*/
 	}
 	//关联isbn与id
     function getIsbn($bookId,$bookIsbn,$bookType,$IsRenew){//book_name book_author book_pub book_type book_edit book_price book_info
-    	$curl = curl_init('https://api.douban.com/v2/book/isbn/:'.$bookIsbn); 
+    	/*$curl = curl_init('https://api.douban.com/v2/book/isbn/:'.$bookIsbn); 
 		curl_setopt($curl, CURLOPT_FAILONERROR, true); 
 		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true); 
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); 
 		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false); //
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false); //
 		$result = curl_exec($curl); 
-        curl_close($curl); 
+        curl_close($curl);*/ 
+        $result=file_get_contents('https://api.douban.com/v2/book/isbn/:'.$bookIsbn);
   		$arr = (Array)json_decode($result,true); 
  		$bookName=$arr['title'];
  		//echo $book_name;
