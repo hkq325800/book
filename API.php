@@ -643,7 +643,7 @@
  		}unset($value);
  		//echo $bookAuthor;
  		$bookPic=$arr['image'];
- 		//echo $bookPpic;
+ 		//echo $bookPic;
  		$bookEdit=$arr['publisher'];
  		//echo $bookEdit;
  		$bookPrice=$arr['price'];
@@ -668,7 +668,7 @@
     }
 	//添加图书数据
 	function add($bookIsbn,$bookName,$bookAuthor,$bookType,$bookPic,$bookEdit,$bookPrice,$bookPub,$bookInfo,$bookLink){
-		$sql="insert bookbasic (book_isbn,book_name,book_author,book_type,book_edit,book_price,book_pub,book_info) values ('$bookIsbn','$bookName','$bookAuthor','$bookType','$bookEdit','$bookPrice','$bookPub','$bookInfo')";
+		$sql="insert bookbasic (book_isbn,book_name,book_author,book_type,book_pic,book_edit,book_price,book_pub,book_info,book_link) values ('$bookIsbn','$bookName','$bookAuthor','$bookType','$bookPic','$bookEdit','$bookPrice','$bookPub','$bookInfo','$bookLink')";
 		$query = mysql_query($sql);//bookbasic插入图书数据
 		//echo $sql.'<br/>';
 		!$query?error('sql_error'):add_insert_booklist($bookIsbn);
