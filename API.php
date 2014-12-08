@@ -748,6 +748,7 @@
 			while($res = mysql_fetch_array($query)) {
 				$response[$i] = array(  'book_id'=>toString($res['book_id']),
 										'book_name'=>toString($res['book_name']),
+										'book_author'=>toString($res['book_author']),
 										'book_status'=>toString($res['book_status']),
 										'user_name'=>toString($res['user_name']),
 										'favour'=>toString($res['favour']),
@@ -783,6 +784,7 @@
 			while($res = mysql_fetch_array($query)) {
 				$response[$i] = array(  'book_id'=>toString($res['book_id']),
 										'book_name'=>toString($res['book_name']),
+										'book_author'=>toString($res['book_author']),
 										'book_status'=>toString($res['book_status']),
 										'user_name'=>toString($res['user_name']),
 										'favour'=>toString($res['favour']),
