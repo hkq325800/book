@@ -738,11 +738,19 @@
 					if(identity('booklist','book_kind',$bookKind,'','')){//找到重复不删除bookbasic
 						found();
 					}
-					else{
+					else{//未找到重复的删除bookbasic数据
 						$sql="delete from bookbasic where id='$bookKind'";
 						$query = mysql_query($sql);
 						//echo $sql."<br/>";
-						!$query?error('sql_error'):found();
+						if(!$query){
+							error('sql_error');
+						}
+						else{//再删除booklike中数据
+							$sql="delete from booklike where book_kind='$bookKind'";
+							$query = mysql_query($sql);
+							//echo $sql."<br/>";
+							!$query?error('sql_error'):found();
+						}
 					}
 				}
 					
