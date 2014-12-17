@@ -534,7 +534,8 @@
 		}
 	}
 	//查看曾借过的书
-	/*"book_id":书本kind,
+	/*"cir_id":借阅活动id,
+	"book_id":书本kind,
 	"book_detail_url":书本详细url,
 	"book_name":书本名称,
 	"book_author":书本作者,
@@ -549,7 +550,7 @@
 		if($offset>=0){
 			$turn=" LIMIT $page_size OFFSET $offset ";
 		}
-		$sql="SELECT ba.id AS book_kind, book_name,book_author, CASE updated_at WHEN '0000-00-00' THEN '未还' ELSE '已还' END AS book_status, favour, book_pic, CASE ba.id IN ( SELECT book_kind FROM booklike WHERE user_id = '$userId' ) WHEN FALSE THEN '0' ELSE '1' END AS isLike, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li JOIN bookbasic ba ON li.book_kind = ba.id JOIN bookcirculate cir ON li.id = cir.book_id WHERE cir.user_id = '$userId' ORDER BY book_kind ";
+		$sql="SELECT cir.id AS cir_id, ba.id AS book_kind, book_name,book_author, CASE updated_at WHEN '0000-00-00' THEN '未还' ELSE '已还' END AS book_status, favour, book_pic, CASE ba.id IN ( SELECT book_kind FROM booklike WHERE user_id = '$userId' ) WHEN FALSE THEN '0' ELSE '1' END AS isLike, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li JOIN bookbasic ba ON li.book_kind = ba.id JOIN bookcirculate cir ON li.id = cir.book_id WHERE cir.user_id = '$userId' ORDER BY book_kind ";
 		$sql=$sql.$turn;
 		//echo $sql."<br/>";
 		sql2response_book_outline($sql,true);
@@ -759,7 +760,8 @@
 
 	}
 	//查看已借出的书
-	/*"book_kind":书本kind,
+	/*"cir_id":借阅活动id,
+	"book_id":书本id,
 	"book_name":书本名称,
 	"boou_author":作者,
 	"book_status":书本状态,
@@ -773,7 +775,7 @@
 		if($offset>=0){
 			$turn=" LIMIT $page_size OFFSET $offset ";
 		}
-		$sql="SELECT li.id AS book_id, book_name,book_author, book_status, `user`.user_name, favour, book_pic,  created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li LEFT JOIN bookbasic ba ON li.book_kind = ba.id LEFT JOIN bookcirculate cir ON cir.book_id = li.id LEFT JOIN `user` ON `user`.user_id = cir.user_id WHERE book_status = '已被借' or '已超期' AND cir.updated_at = '0000-00-00' ORDER BY book_id";
+		$sql="SELECT cir.id AS cir_id, li.id AS book_id, book_name,book_author, book_status, `user`.user_name, favour, book_pic,  created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li LEFT JOIN bookbasic ba ON li.book_kind = ba.id LEFT JOIN bookcirculate cir ON cir.book_id = li.id LEFT JOIN `user` ON `user`.user_id = cir.user_id WHERE book_status = '已被借' or '已超期' AND cir.updated_at = '0000-00-00' ORDER BY book_id";
 		//echo $sql."<br/>";
 		$sql=$sql.$turn;
 		$query = mysql_query($sql);
@@ -784,7 +786,8 @@
 		else {
 			$i = 0;
 			while($res = mysql_fetch_array($query)) {
-				$response[$i] = array(  'book_id'=>toString($res['book_id']),
+				$response[$i] = array(  'cir_id'=>toString($res['cir_id']),
+										'book_id'=>toString($res['book_id']),
 										'book_name'=>toString($res['book_name']),
 										'book_author'=>toString($res['book_author']),
 										'book_status'=>toString($res['book_status']),
@@ -879,7 +882,8 @@
 											'isLike'=>toString($res['isLike']));		
 				}
 				else{
-					$response[$i] = array(  'book_kind'=>toString($res['book_kind']),
+					$response[$i] = array(  'cir_id'=>toString($res['cir_id']),
+											'book_kind'=>toString($res['book_kind']),
 											'book_detail_url'=>toString($book_detail_url),
 											'book_name'=>toString($res['book_name']),
 											'book_author'=>toString($res['book_author']),
