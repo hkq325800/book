@@ -775,8 +775,8 @@
 		if($offset>=0){
 			$turn=" LIMIT $page_size OFFSET $offset ";
 		}
-		$sql="SELECT li.id AS book_id, book_name,book_author, book_status, `user`.user_name, favour, book_pic,  created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li LEFT JOIN bookbasic ba ON li.book_kind = ba.id LEFT JOIN bookcirculate cir ON cir.book_id = li.id LEFT JOIN `user` ON `user`.user_id = cir.user_id WHERE book_status = '已被借' or '已超期' AND cir.updated_at = '0000-00-00 00:00:00' ORDER BY book_id";
-		//echo $sql."<br/>";
+		$sql="SELECT distinct li.id AS book_id, book_name,book_author, book_status, `user`.user_name, favour, book_pic,  created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li LEFT JOIN bookbasic ba ON li.book_kind = ba.id LEFT JOIN bookcirculate cir ON cir.book_id = li.id LEFT JOIN `user` ON `user`.user_id = cir.user_id WHERE book_status = '已被借' or '已超期' AND cir.updated_at = '0000-00-00 00:00:00' ORDER BY book_id";
+		echo $sql."<br/>";
 		$sql=$sql.$turn;
 		$query = mysql_query($sql);
 		$response = array();
