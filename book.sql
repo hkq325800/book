@@ -398,5 +398,3 @@ INSERT INTO `user` VALUES ('23', '12108318', '罗鹏展', '2733b73426c8d43db20f6
 INSERT INTO `user` VALUES ('24', '12108327', '谢俊杰', 'b6c63bc373200d84c0020d7f5b7c6ef2', '购书管理');
 INSERT INTO `user` VALUES ('25', '12108331', '许鹏飞', '5370b00a2b3f1a75512ee6facf57127d', '普通用户');
 INSERT INTO `user` VALUES ('26', '12108413', '黄可庆', 'ca8e4dea8b6c7e5dffb81548989ea0b2', '普通用户');
-INSERT INTO `user` VALUES ('27', '99', 'adfa', '36726da8ea2157ed79d6e6da7b310c2d', '普通用户');
-INSERT INTO `user` VALUES ('28', '98', 'qwe', 'f69d687b87b02663a54c13de7a3820aa', '普通用户');

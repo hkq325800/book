@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50620
 File Encoding         : 65001
 
-Date: 2014-12-18 15:36:48
+Date: 2014-12-18 16:06:26
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -29,12 +29,11 @@ CREATE TABLE `bookactivity` (
   `act_cost` float DEFAULT NULL COMMENT '活动花费',
   `act_message` varchar(255) DEFAULT NULL COMMENT '活动公示',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of bookactivity
 -- ----------------------------
-INSERT INTO `bookactivity` VALUES ('1', '2014.9.1-2014.10.1', '0', '0', '0000-00-00', '0000-00-00', null, '');
 
 -- ----------------------------
 -- Table structure for `bookbasic`
@@ -54,7 +53,7 @@ CREATE TABLE `bookbasic` (
   `book_info` text COMMENT '书本简介',
   `favour` int(11) NOT NULL DEFAULT '0' COMMENT '点赞数目',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of bookbasic
@@ -71,7 +70,7 @@ CREATE TABLE `bookcirculate` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of bookcirculate
@@ -86,7 +85,7 @@ CREATE TABLE `booklike` (
   `book_kind` int(11) NOT NULL COMMENT '与类关联',
   `user_id` int(11) NOT NULL COMMENT '与人关联',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of booklike
@@ -103,7 +102,7 @@ CREATE TABLE `booklist` (
   `book_status` varchar(255) NOT NULL DEFAULT '未被借' COMMENT '书本状态',
   `act_id` int(11) NOT NULL DEFAULT '0' COMMENT '活动相关',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of booklist
@@ -121,12 +120,11 @@ CREATE TABLE `bookmessage` (
   `created_at` date NOT NULL COMMENT '创建日期',
   `updated_at` date NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of bookmessage
 -- ----------------------------
-INSERT INTO `bookmessage` VALUES ('1', '1', '1', '我看过这本', '2014-10-27', '0000-00-00');
 
 -- ----------------------------
 -- Table structure for `recommend`
@@ -142,12 +140,11 @@ CREATE TABLE `recommend` (
   `buy_link` text NOT NULL COMMENT '购买链接',
   `rec_type` varchar(255) NOT NULL COMMENT '推荐类别',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of recommend
 -- ----------------------------
-INSERT INTO `recommend` VALUES ('1', '1', '1', '这书不错', '2014-10-26', '0000-00-00', '', '自选入库');
 
 -- ----------------------------
 -- Table structure for `user`
@@ -191,5 +188,3 @@ INSERT INTO `user` VALUES ('23', '12108318', '罗鹏展', '2733b73426c8d43db20f6
 INSERT INTO `user` VALUES ('24', '12108327', '谢俊杰', 'b6c63bc373200d84c0020d7f5b7c6ef2', '购书管理');
 INSERT INTO `user` VALUES ('25', '12108331', '许鹏飞', '5370b00a2b3f1a75512ee6facf57127d', '普通用户');
 INSERT INTO `user` VALUES ('26', '12108413', '黄可庆', 'ca8e4dea8b6c7e5dffb81548989ea0b2', '普通用户');
-INSERT INTO `user` VALUES ('27', '99', 'adfa', '36726da8ea2157ed79d6e6da7b310c2d', '普通用户');
-INSERT INTO `user` VALUES ('28', '98', 'qwe', 'f69d687b87b02663a54c13de7a3820aa', '普通用户');
