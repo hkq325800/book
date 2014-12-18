@@ -352,7 +352,7 @@
 				$where=" WHERE book_status = '已被借'";
 			}
 			else if($type==0){//总数
-				$where=" where book_status in ('已被借','未被借','已超期') ";
+				$where=" where book_status in ('已被借','未被借') ";
 			}
 			else return error('');
 		}
@@ -602,23 +602,6 @@
 		}
 
 	}
-	/*//设置图书为已超期
-	function alter($bookId){
-		if(!identity('booklist','book_status','已被借','id',$bookId)){
-			error('bookverify_error');
-		}
-		else{
-			if(identity('bookcirculate','updated_at','0000-00-00 00:00:00','book_id',$bookId)){
-				error('bookverify_error');
-			}
-			else{
-				$sql="update booklist set book_status='已超期' where id=$bookId";
-				$query = mysql_query($sql);//更新bookbasic
-				//echo $sql."<br/>";
-				!$query?error('sql_error'):found();
-			}
-		}
-	}*/
 	//更新图书数据准备
 	function renew($bookId,$bookIsbn){
 		$sql="select DISTINCT book_type from bookbasic ba,booklist li where ba.id=li.book_kind and li.id='$bookId'";//查出书在数据库中的类型填写getIsbn
@@ -775,8 +758,8 @@
 		if($offset>=0){
 			$turn=" LIMIT $page_size OFFSET $offset ";
 		}
-		$sql="SELECT distinct li.id AS book_id, book_name,book_author, book_status, `user`.user_name, favour, book_pic,  created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li LEFT JOIN bookbasic ba ON li.book_kind = ba.id LEFT JOIN bookcirculate cir ON cir.book_id = li.id LEFT JOIN `user` ON `user`.user_id = cir.user_id WHERE book_status = '已被借' or '已超期' AND cir.updated_at = '0000-00-00 00:00:00' ORDER BY book_id";
-		echo $sql."<br/>";
+		$sql="SELECT DISTINCT li.id AS book_id, book_name, book_author, book_status, `user`.user_name, favour, book_pic, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li JOIN bookbasic ba ON li.book_kind = ba.id JOIN bookcirculate cir ON cir.book_id = li.id JOIN `user` ON `user`.user_id = cir.user_id WHERE book_status = '已被借' AND cir.updated_at = '0000-00-00 00:00:00' ORDER BY book_id";
+		//echo $sql."<br/>";
 		$sql=$sql.$turn;
 		$query = mysql_query($sql);
 		$response = array();
@@ -801,42 +784,6 @@
 			echo $response;
 		}
 	}
-	//查看已超期图书
-	/*"book_id":书本id,
-	"book_name":书本名称,
-	"boou_author":作者,
-	"book_status":书本状态,
-	"user_name":借阅人,
-	"favour":点赞数,
-	"book_pic":图书图片,
-	"created_at":借阅时间,
-	"return_at":剩余天数*/
-	/*function showOut(){
-		$sql="SELECT li.id as book_id, book_name,book_author, book_status, `user`.user_name, favour, book_pic, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li LEFT JOIN bookcirculate cir ON li.id = cir.book_id LEFT JOIN bookbasic ba ON ba.id = li.book_kind LEFT JOIN `user` ON `user`.id = cir.user_id HAVING return_at < 0";
-		//echo $sql."<br/>";
-		$query = mysql_query($sql);
-		$response = array();
-		if(!$query) {
-			error('sql_error');
-		}
-		else {
-			$i = 0;
-			while($res = mysql_fetch_array($query)) {
-				$response[$i] = array(  'book_id'=>toString($res['book_id']),
-										'book_name'=>toString($res['book_name']),
-										'book_author'=>toString($res['book_author']),
-										'book_status'=>toString($res['book_status']),
-										'user_name'=>toString($res['user_name']),
-										'favour'=>toString($res['favour']),
-										'book_pic'=>toString($res['book_pic']),
-										'created_at'=>toString($res['created_at']),
-										'return_at'=>toString($res['return_at']));			  
-				$i++;
-			}
-			$response = json_encode($response);
-			echo $response;
-		}
-	}*/
 	/**
 	//----------工具函数----------
 	**/
