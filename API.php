@@ -536,7 +536,7 @@
 		}
 	}
 	//查看曾借过的书
-	/*"book_id":书本kind,
+	/*"book_id":书本id,
 	"book_detail_url":书本详细url,
 	"book_name":书本名称,
 	"book_author":书本作者,
@@ -551,7 +551,7 @@
 		if($offset>=0){
 			$turn=" LIMIT $page_size OFFSET $offset ";
 		}
-		$sql="SELECT ba.id AS book_kind, book_name,book_author, CASE updated_at WHEN '0000-00-00 00:00:00' THEN '未还' ELSE '已还' END AS book_status, favour, book_pic, CASE ba.id IN ( SELECT book_kind FROM booklike WHERE user_id = '$userId' ) WHEN FALSE THEN '0' ELSE '1' END AS isLike, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li JOIN bookbasic ba ON li.book_kind = ba.id JOIN bookcirculate cir ON li.id = cir.book_id WHERE cir.user_id = '$userId' ORDER BY book_kind ";
+		$sql="SELECT li.id AS book_id, book_name,book_author, CASE updated_at WHEN '0000-00-00 00:00:00' THEN '未还' ELSE '已还' END AS book_status, favour, book_pic, CASE ba.id IN ( SELECT book_kind FROM booklike WHERE user_id = '$userId' ) WHEN FALSE THEN '0' ELSE '1' END AS isLike, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li JOIN bookbasic ba ON li.book_kind = ba.id JOIN bookcirculate cir ON li.id = cir.book_id WHERE cir.user_id = '$userId' ORDER BY book_kind ";
 		$sql=$sql.$turn;
 		//echo $sql."<br/>";
 		sql2response_book_outline($sql,true);
@@ -869,8 +869,8 @@
 				!$isTime?
 				$book_status="共有".toString($res['sum'])."本,已借出".toString($res['rent'])."本":
 				$book_status=$res['book_status'];
-				$book_detail_url=url."/public/detail/$res[book_kind]";
 				if(!$isTime){
+					$book_detail_url=url."/public/detail/$res[book_kind]";
 					$response[$i] = array(  'book_kind'=>toString($res['book_kind']),
 											'book_detail_url'=>$book_detail_url,
 											'book_name'=>toString($res['book_name']),
@@ -881,8 +881,7 @@
 											'isLike'=>toString($res['isLike']));		
 				}
 				else{
-					$response[$i] = array(  'book_kind'=>toString($res['book_kind']),
-											'book_detail_url'=>toString($book_detail_url),
+					$response[$i] = array(  'book_id'=>toString($res['book_id']),
 											'book_name'=>toString($res['book_name']),
 											'book_author'=>toString($res['book_author']),
 											'book_status'=>toString($book_status),
