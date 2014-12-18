@@ -432,8 +432,9 @@
 											'created_at'=>$res['created_at']*/);			  
 					$i++;
 				}
-				$array=array('book_detail'=>$book_detail,'book_list'=>$book_list);
-				$response = json_encode($array);
+				//$array=array('book_detail'=>$book_detail,'book_list'=>$book_list);
+				$book_detail+=array('book_list'=>$book_list);
+				$response = json_encode($book_detail);
 				echo $response;
 			}
 		}
