@@ -385,7 +385,10 @@
     "book_list": [
         {
             "book_id": ,
-            "book_status": 
+            "book_status":,
+            "user_name":,
+            "created_at":,
+            "updated_at": 
         },
         {
              ...
@@ -416,7 +419,7 @@
 								'book_link'=>$res['book_link'],
 								'book_info'=>$res['book_info'],
 								'favour'=>$res['favour']);
-			$sql="SELECT li.id book_id, book_status FROM booklist li WHERE book_kind = '$bookKind'";
+			$sql="SELECT DISTINCT li.id book_id, user_name, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at, book_status FROM booklist li LEFT JOIN bookcirculate cir ON cir.book_id = li.id LEFT JOIN `user` ON `user`.user_id = cir.user_id WHERE book_kind = '$bookKind' ORDER BY li.id";
 			//echo $sql."<br/>";
 			$query = mysql_query($sql);
 			if(!$query) {
@@ -427,9 +430,10 @@
 				$i = 0;
 				while($res = mysql_fetch_array($query)) {
 					$book_list[$i] = array('book_id'=>toString($res['book_id']),
-											'book_status'=>toString($res['book_status'])/*,
+											'book_status'=>toString($res['book_status']),
 											'user_name'=>$res['user_name'],
-											'created_at'=>$res['created_at']*/);			  
+											'created_at'=>$res['created_at'],
+											'return_at'=>$res['return_at']);
 					$i++;
 				}
 				//$array=array('book_detail'=>$book_detail,'book_list'=>$book_list);
