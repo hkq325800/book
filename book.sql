@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50620
 File Encoding         : 65001
 
-Date: 2014-11-27 10:41:30
+Date: 2014-12-18 15:35:14
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -54,13 +54,13 @@ CREATE TABLE `bookbasic` (
   `book_info` text COMMENT '书本简介',
   `favour` int(11) NOT NULL DEFAULT '0' COMMENT '点赞数目',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of bookbasic
 -- ----------------------------
-INSERT INTO `bookbasic` VALUES ('1', '', 'Android应用UI设计模式', 'Greg Nudelman', null, '移动端', '人民邮电出版社', '0.0', '', null, null, '2');
-INSERT INTO `bookbasic` VALUES ('2', '', 'Android和PHP开发最佳实践', '黄隽实', null, '移动端', '机械工业出版社', '0.0', '', null, null, '0');
+INSERT INTO `bookbasic` VALUES ('1', '9787115334688', 'Android应用UI设计模式', '[美] Greg Nudelman', '2013-12', '移动端', '人民邮电出版社', '69.0', 'http://img3.douban.com/mpic/s27126934.jpg', 'http://book.douban.com/subject/25764505/', '目前，谷歌Android 操作系统在移动市场中风头正劲，并且未来发展势不可挡。本书面向Android 4.0+操作系统，是市面上第一本深入解析Android 界面设计的佳作。本书从适用于移动设备和平板的通用模式以及Android UI 设计指南出发，深入探讨了58 种重要的Android 交互设计模式及其应用。每种模式登场之前，先用基本知识铺路，接着展示常见的设计陷阱和欠佳的设计模式，最后对这些模式进行改进，从而打造卓越的交互设计以及直观的信息架构。\n本书可满足移动设计人员和开发人员的需求，帮助他们轻松成为移动用户体验设计高手。', '2');
+INSERT INTO `bookbasic` VALUES ('2', '9787111410508', 'Android和PHP开发最佳实践', '黄隽实', '2013-3-20', '移动端', '机械工业出版社华章公司', '79.0', 'http://img5.douban.com/mpic/s25804527.jpg', 'http://book.douban.com/subject/21677501/', '本书是国内第一本同时讲述Android客户端开发和PHP服务端开发的经典著作。\n本书以一个完整的微博应用项目实例为主线，由浅入深地讲解了Android客户端开发和PHP服务端开发的思路和技巧。从前期的产品设计、架构设计，到客户端和服务端的编码实现，再到性能测试和系统优化，以及最后的打包发布，完整地介绍了移动互联网应用开发的过程。同时，本书也介绍了Android系统中比较有特色的功能，比如Google地图、LBS功能、传感器、摄像头、多媒体以及语音功能的使用等。此外，本书还介绍了Android NDK的开发以及Android游戏开发的相关内容，包括OpenGL的使用、流行游戏引擎Cocos2d-x和Unity 3D。\n本书适合于所有对Android和PHP技术有兴趣的读者。不管是客户端还是服务端的开发者，都可以从本书中获得不少有用的经验。另外，值得一提的是，全书绝大部分的实例代码均源自于真实项目，参考价值极高。', '0');
 INSERT INTO `bookbasic` VALUES ('3', '', '深入浅出PhoneGap', '饶侠', null, '移动端', '人民邮电出版社', '0.0', '', null, null, '1');
 INSERT INTO `bookbasic` VALUES ('4', '', '第一行代码Android', '郭霖', null, '移动端', '人民邮电出版社', '0.0', '', null, null, '0');
 INSERT INTO `bookbasic` VALUES ('5', '', 'Java程序设计经典300例', '李源', null, 'JAVA', '电子工业出版社', '0.0', '', null, null, '0');
@@ -105,7 +105,6 @@ INSERT INTO `bookbasic` VALUES ('43', '', 'PHP与MySQL程序设计', 'W.Jason Gi
 INSERT INTO `bookbasic` VALUES ('44', '', '利用Python进行数据分析', 'Wes McKinney', null, '数据挖掘', '机械工业出版社', '0.0', '', null, null, '0');
 INSERT INTO `bookbasic` VALUES ('45', '', 'Hadoop权威指南', 'Tom White', null, '数据挖掘', '清华大学出版社', '0.0', '', null, null, '0');
 INSERT INTO `bookbasic` VALUES ('46', '', '数据挖掘', 'Jiawei Han', null, '数据挖掘', '机械工业出版社', '0.0', '', null, null, '0');
-INSERT INTO `bookbasic` VALUES ('47', '9787111358732', 'HTML 5实战', '陶国荣', '2011-11', '前端', '机械工业出版社', '59.0', 'http://img3.douban.com/mpic/s24573620.jpg', 'http://book.douban.com/subject/6958339/', '陶国荣编著的《HTML5实战》是一本系统而全面的HTML 5教程，根据HTML 5标准的最新草案，系统地对HTML 5的所有重要知识点进行了全面的讲解。在写作方式上，本书以一种开创性的方式使理论与实践达到极好的平衡，不仅对理论知识进行了清晰而透彻的阐述，而且根据读者理解这些知识的需要，精心设计了106个完整（每个案例分为功能描述、实现代码、效果展示和代码分析4个部分）的实战案例，旨在帮助读者通过实践的方式迅速掌握这些知识。\n《HTML5实战》共11章，内容涵盖了HTML 5的各个方面。第1章通过实现一个简单的HTML 5页面讲解了如何搭建支持HTML 5的浏览器环境、HTML 5页面所具备的特征，以及如何检测浏览器对HTML 5的各种特性的支持情况；第2章介绍了HTML 5中常用的交互元素，包括内容交互元素、菜单交互元素和状态交互元素等几大类；第3章介绍了HTML根元素、文档元素，以及与脚本、节点、分组内容、文本层次语义、嵌入内容、公共属性相关的重要元素；第4章和第5章讲解了HTML 5中的表单和文件的功能特性以及常见的各种操作；第6章和第7章讲解了HTML 5中的音频、视频和绘图相关的知识，重点讲解了各种常见的操作和使用方法；第8章和第9章讲解了HTML 5中的数据存储和离线应用；第10章对Web Sockets、Geolocation、Web Workers、元素的拖放等重要内容进行了全面的讲解。\n本书适合所有想系统学习HTML 5的读者阅读。如果按照本书的顺序逐章阅读，同时亲自动手实现本书中的案例，相信一定能达到事半功倍的效果。\n\n海报：', '3');
 INSERT INTO `bookbasic` VALUES ('48', '', 'Web前端黑客技术揭秘', '钟晨鸣', null, '前端', '电子工业出版社', '0.0', '', null, null, '0');
 INSERT INTO `bookbasic` VALUES ('49', '', 'HTML5与CSS3权威指南', '陆凌牛', null, '前端', '机械工业出版社', '0.0', '', null, null, '0');
 INSERT INTO `bookbasic` VALUES ('50', '', 'CSS高效开发实战', '谢郁', null, '前端', '电子工业出版社', '0.0', '', null, null, '0');
@@ -158,7 +157,6 @@ INSERT INTO `bookbasic` VALUES ('96', '', '物联网导论', '刘云浩', null, 
 INSERT INTO `bookbasic` VALUES ('97', '', '用AngularJS开发下一代Web应用', 'Brad Green', null, '前端', '电子工业出版社', '0.0', '', null, null, '0');
 INSERT INTO `bookbasic` VALUES ('98', '', 'CSS设计指南', 'Charles Wyke-Smith', null, '前端', '人民邮电出版社', '0.0', '', null, null, '0');
 INSERT INTO `bookbasic` VALUES ('99', '', 'new book', '123', null, '46', '90出版社', '12.0', '', null, null, '0');
-INSERT INTO `bookbasic` VALUES ('100', '', '2', '3', '4', '5', '6', '7.0', '8', '9', '0', '0');
 
 -- ----------------------------
 -- Table structure for `bookcirculate`
@@ -168,21 +166,21 @@ CREATE TABLE `bookcirculate` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `book_id` int(11) NOT NULL COMMENT '与书关联',
   `user_id` int(11) NOT NULL COMMENT '用户关联',
-  `created_at` date NOT NULL,
-  `updated_at` date NOT NULL DEFAULT '0000-00-00',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of bookcirculate
 -- ----------------------------
-INSERT INTO `bookcirculate` VALUES ('1', '47', '12108413', '2014-10-13', '2014-11-12');
-INSERT INTO `bookcirculate` VALUES ('2', '40', '12108206', '2014-10-22', '0000-00-00');
-INSERT INTO `bookcirculate` VALUES ('3', '1', '12108413', '2014-11-05', '0000-00-00');
-INSERT INTO `bookcirculate` VALUES ('4', '47', '12108238', '2014-11-25', '0000-00-00');
-INSERT INTO `bookcirculate` VALUES ('5', '2', '12108413', '2014-11-10', '2014-11-26');
-INSERT INTO `bookcirculate` VALUES ('6', '113', '12108206', '2014-11-12', '0000-00-00');
-INSERT INTO `bookcirculate` VALUES ('8', '5', '12108413', '2014-11-25', '0000-00-00');
+INSERT INTO `bookcirculate` VALUES ('2', '40', '12108206', '2014-10-22 00:00:00', '0000-00-00 00:00:00');
+INSERT INTO `bookcirculate` VALUES ('3', '1', '12108413', '2014-11-05 00:00:00', '0000-00-00 00:00:00');
+INSERT INTO `bookcirculate` VALUES ('5', '2', '12108413', '2014-11-10 00:00:00', '2014-11-26 00:00:00');
+INSERT INTO `bookcirculate` VALUES ('8', '5', '12108413', '2014-11-25 00:00:00', '0000-00-00 00:00:00');
+INSERT INTO `bookcirculate` VALUES ('9', '2', '12108413', '2014-11-27 00:00:00', '2014-11-27 00:00:00');
+INSERT INTO `bookcirculate` VALUES ('10', '2', '12108413', '2014-11-27 00:00:00', '0000-00-00 00:00:00');
+INSERT INTO `bookcirculate` VALUES ('11', '2', '12108413', '2014-11-27 00:00:00', '0000-00-00 00:00:00');
 
 -- ----------------------------
 -- Table structure for `booklike`
@@ -193,7 +191,7 @@ CREATE TABLE `booklike` (
   `book_kind` int(11) NOT NULL COMMENT '与类关联',
   `user_id` int(11) NOT NULL COMMENT '与人关联',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of booklike
@@ -202,7 +200,6 @@ INSERT INTO `booklike` VALUES ('1', '1', '12108413');
 INSERT INTO `booklike` VALUES ('2', '3', '12108413');
 INSERT INTO `booklike` VALUES ('3', '1', '12108238');
 INSERT INTO `booklike` VALUES ('4', '6', '12108238');
-INSERT INTO `booklike` VALUES ('5', '47', '12108238');
 
 -- ----------------------------
 -- Table structure for `booklist`
@@ -215,13 +212,13 @@ CREATE TABLE `booklist` (
   `book_status` varchar(255) NOT NULL DEFAULT '未被借' COMMENT '书本状态',
   `act_id` int(11) NOT NULL DEFAULT '0' COMMENT '活动相关',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=123 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of booklist
 -- ----------------------------
 INSERT INTO `booklist` VALUES ('1', '1', '2014-09-01', '已被借', '0');
-INSERT INTO `booklist` VALUES ('2', '2', '2014-09-01', '未被借', '0');
+INSERT INTO `booklist` VALUES ('2', '2', '2014-09-01', '已被借', '1');
 INSERT INTO `booklist` VALUES ('3', '3', '2014-09-01', '未入库', '0');
 INSERT INTO `booklist` VALUES ('4', '4', '2014-09-01', '已超期', '0');
 INSERT INTO `booklist` VALUES ('5', '5', '2014-09-01', '已被借', '0');
@@ -266,7 +263,6 @@ INSERT INTO `booklist` VALUES ('43', '43', '2014-09-01', '未被借', '0');
 INSERT INTO `booklist` VALUES ('44', '44', '2014-09-01', '未被借', '0');
 INSERT INTO `booklist` VALUES ('45', '45', '2014-09-01', '未被借', '0');
 INSERT INTO `booklist` VALUES ('46', '46', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('47', '47', '2014-09-01', '已被借', '0');
 INSERT INTO `booklist` VALUES ('48', '48', '2014-09-01', '未被借', '0');
 INSERT INTO `booklist` VALUES ('49', '49', '2014-09-01', '未被借', '0');
 INSERT INTO `booklist` VALUES ('50', '50', '2014-09-01', '未被借', '0');
@@ -319,10 +315,6 @@ INSERT INTO `booklist` VALUES ('96', '96', '2014-09-01', '未被借', '0');
 INSERT INTO `booklist` VALUES ('97', '97', '2014-09-01', '未被借', '0');
 INSERT INTO `booklist` VALUES ('98', '98', '2014-09-01', '未被借', '0');
 INSERT INTO `booklist` VALUES ('99', '99', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('100', '100', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('101', '47', '2014-11-26', '未被借', '0');
-INSERT INTO `booklist` VALUES ('113', '47', '2014-11-25', '已被借', '0');
-INSERT INTO `booklist` VALUES ('122', '47', '2014-11-26', '未被借', '0');
 
 -- ----------------------------
 -- Table structure for `bookmessage`
@@ -396,7 +388,7 @@ INSERT INTO `user` VALUES ('13', '12108222', '沈之川', 'ac677272ad2b6480bc834
 INSERT INTO `user` VALUES ('14', '12108227', '熊君睿', '0e44b4c6c34dc8ce18c01770219ca1e1', '普通用户');
 INSERT INTO `user` VALUES ('15', '12108230', '章晨昱', '84b1df4354bdce1324009d97073e3856', '普通用户');
 INSERT INTO `user` VALUES ('16', '12108234', '张旭', 'fec6b9b77656406c09ef0c06017f252a', '普通用户');
-INSERT INTO `user` VALUES ('17', '12108238', '钟云昶', '123', '图书管理');
+INSERT INTO `user` VALUES ('17', '12108238', '钟云昶', '6da788b5325d4e487f38930e2cd90c08', '图书管理');
 INSERT INTO `user` VALUES ('18', '12108305', '王雪莹', '12bb5766cc55ef0e09aa196e20959729', '普通用户');
 INSERT INTO `user` VALUES ('19', '12108306', '曹平涛', 'c304fb8318c7a552a4e241e1b3c5c2dc', '普通用户');
 INSERT INTO `user` VALUES ('20', '12108309', '程彦', '2f7a10e0faa742d8f5f4665d6e4f3e05', '普通用户');
@@ -405,6 +397,6 @@ INSERT INTO `user` VALUES ('22', '12108316', '刘铁', '770653b67a74cf253287e053
 INSERT INTO `user` VALUES ('23', '12108318', '罗鹏展', '2733b73426c8d43db20f607f886f51f7', '普通用户');
 INSERT INTO `user` VALUES ('24', '12108327', '谢俊杰', 'b6c63bc373200d84c0020d7f5b7c6ef2', '购书管理');
 INSERT INTO `user` VALUES ('25', '12108331', '许鹏飞', '5370b00a2b3f1a75512ee6facf57127d', '普通用户');
-INSERT INTO `user` VALUES ('26', '12108413', '黄可庆', '12345', '普通用户');
-INSERT INTO `user` VALUES ('27', '99', 'adfa', '59cf4aae5d59e8ac95ae7e2590919b58', '普通用户');
-INSERT INTO `user` VALUES ('28', '98', 'qwe', '59cf4aae5d59e8ac95ae7e2590919b58', '普通用户');
+INSERT INTO `user` VALUES ('26', '12108413', '黄可庆', 'ca8e4dea8b6c7e5dffb81548989ea0b2', '普通用户');
+INSERT INTO `user` VALUES ('27', '99', 'adfa', '36726da8ea2157ed79d6e6da7b310c2d', '普通用户');
+INSERT INTO `user` VALUES ('28', '98', 'qwe', 'f69d687b87b02663a54c13de7a3820aa', '普通用户');
