@@ -419,7 +419,7 @@
 								'book_link'=>$res['book_link'],
 								'book_info'=>$res['book_info'],
 								'favour'=>$res['favour']);
-			$sql="SELECT DISTINCT li.id book_id, user_name, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at, book_status FROM booklist li LEFT JOIN bookcirculate cir ON cir.book_id = li.id LEFT JOIN `user` ON `user`.user_id = cir.user_id WHERE book_kind = '$bookKind' ORDER BY li.id";
+			$sql="SELECT DISTINCT li.id book_id, user_name, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at, book_status FROM booklist li LEFT JOIN bookcirculate cir ON cir.book_id = li.id LEFT JOIN `user` ON `user`.user_id = cir.user_id WHERE book_kind = '$bookKind' and updated_at = '0000-00-00 00:00:00' ORDER BY li.id";
 			//echo $sql."<br/>";
 			$query = mysql_query($sql);
 			if(!$query) {
@@ -533,6 +533,8 @@
 			error('sql_error');
 		}
 		else {//bookcirculate插入借书记录
+			identity('bookcirculate','user_id','0','book_id',$bookId)?
+			$sql="update bookcirculate set user_id='$userId' , created_at='$updated_at' where book_id='$bookId'":
 			$sql="insert bookcirculate (book_id,user_id,created_at) values ('$bookId','$userId','$updated_at')";
 			$query = mysql_query($sql);
 			//echo $sql."<br/>";
@@ -677,10 +679,10 @@
  			update($bookId,$bookIsbn,$bookName,$bookAuthor,$bookType,$bookPic,$bookEdit,$bookPrice,$bookPub,$bookInfo,$bookLink);
  		}
  		else{//添加
-	 		if(!identity('bookbasic','book_name',$bookName,'','')){//basic中不存在两张表中add
+	 		if(!identity('bookbasic','book_name',$bookName,'','')){//basic中不存在三张表中add
 	    		add($bookIsbn,$bookName,$bookAuthor,$bookType,$bookPic,$bookEdit,$bookPrice,$bookPub,$bookInfo,$bookLink);
 	    	}
-	    	else{//basic中存在只在一张表中add_insert
+	    	else{//basic中存在只在两张表中add_insert
 		 		add_insert_booklist($bookIsbn);
 	    	}
  		}
@@ -694,11 +696,18 @@
 	}
 	//向booklist中插入数据
 	function add_insert_booklist($bookIsbn){
-		$buyTime = date('Y-m-d');
+		$buyTime = date("Y-m-d H:i:s");
 		$sql="INSERT booklist (book_kind, book_time) VALUE (( SELECT id FROM bookbasic WHERE book_isbn = '$bookIsbn' ),'$buyTime')";
 		$query = mysql_query($sql);
 		//echo $sql.'<br/>';
-		!$query?error('sql_error'):found();
+		if(!$query){
+			error('sql_error');
+		}else{
+			$sql="insert bookcirculate (book_id,user_id,created_at) values (( SELECT id FROM booklist WHERE book_time = '$buyTime' ),'0','$buyTime')";
+			$query = mysql_query($sql);
+			//echo $sql.'<br/>';
+			!$query?error('sql_error'):found();
+		}
 	}
 
 	//删除图书数据

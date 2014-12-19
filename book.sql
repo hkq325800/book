@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50620
 File Encoding         : 65001
 
-Date: 2014-12-18 15:35:14
+Date: 2014-12-19 22:07:19
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -34,7 +34,6 @@ CREATE TABLE `bookactivity` (
 -- ----------------------------
 -- Records of bookactivity
 -- ----------------------------
-INSERT INTO `bookactivity` VALUES ('1', '2014.9.1-2014.10.1', '0', '0', '0000-00-00', '0000-00-00', null, '');
 
 -- ----------------------------
 -- Table structure for `bookbasic`
@@ -208,7 +207,7 @@ DROP TABLE IF EXISTS `booklist`;
 CREATE TABLE `booklist` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '清单编号',
   `book_kind` int(11) NOT NULL COMMENT '与类关联',
-  `book_time` date NOT NULL DEFAULT '0000-00-00' COMMENT '录入时间',
+  `book_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '录入时间',
   `book_status` varchar(255) NOT NULL DEFAULT '未被借' COMMENT '书本状态',
   `act_id` int(11) NOT NULL DEFAULT '0' COMMENT '活动相关',
   PRIMARY KEY (`id`)
@@ -217,104 +216,104 @@ CREATE TABLE `booklist` (
 -- ----------------------------
 -- Records of booklist
 -- ----------------------------
-INSERT INTO `booklist` VALUES ('1', '1', '2014-09-01', '已被借', '0');
-INSERT INTO `booklist` VALUES ('2', '2', '2014-09-01', '已被借', '1');
-INSERT INTO `booklist` VALUES ('3', '3', '2014-09-01', '未入库', '0');
-INSERT INTO `booklist` VALUES ('4', '4', '2014-09-01', '已超期', '0');
-INSERT INTO `booklist` VALUES ('5', '5', '2014-09-01', '已被借', '0');
-INSERT INTO `booklist` VALUES ('6', '6', '2014-09-01', '未购买', '0');
-INSERT INTO `booklist` VALUES ('7', '7', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('8', '8', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('9', '9', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('10', '10', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('11', '11', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('12', '12', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('13', '13', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('14', '14', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('15', '15', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('16', '16', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('17', '17', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('18', '18', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('19', '19', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('20', '20', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('21', '21', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('22', '22', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('23', '23', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('24', '24', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('25', '25', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('26', '26', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('27', '27', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('28', '28', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('29', '29', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('30', '30', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('31', '31', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('32', '32', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('33', '33', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('34', '34', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('35', '35', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('36', '36', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('37', '37', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('38', '38', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('39', '39', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('40', '40', '2014-09-01', '已被借', '0');
-INSERT INTO `booklist` VALUES ('41', '41', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('42', '42', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('43', '43', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('44', '44', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('45', '45', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('46', '46', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('48', '48', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('49', '49', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('50', '50', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('51', '51', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('52', '52', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('53', '53', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('54', '54', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('55', '55', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('56', '56', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('57', '57', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('58', '58', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('59', '59', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('60', '60', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('61', '61', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('62', '62', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('63', '63', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('64', '64', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('65', '65', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('66', '66', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('67', '67', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('68', '68', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('69', '69', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('70', '70', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('71', '71', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('72', '72', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('73', '73', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('74', '74', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('75', '75', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('76', '76', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('77', '77', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('78', '78', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('79', '79', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('80', '80', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('81', '81', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('82', '82', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('83', '83', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('84', '84', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('85', '85', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('86', '86', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('87', '87', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('88', '88', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('89', '89', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('90', '90', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('91', '91', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('92', '92', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('93', '93', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('94', '94', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('95', '95', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('96', '96', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('97', '97', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('98', '98', '2014-09-01', '未被借', '0');
-INSERT INTO `booklist` VALUES ('99', '99', '2014-09-01', '未被借', '0');
+INSERT INTO `booklist` VALUES ('1', '1', '2014-09-01 00:00:00', '已被借', '0');
+INSERT INTO `booklist` VALUES ('2', '2', '2014-09-01 00:00:00', '已被借', '1');
+INSERT INTO `booklist` VALUES ('3', '3', '2014-09-01 00:00:00', '未入库', '0');
+INSERT INTO `booklist` VALUES ('4', '4', '2014-09-01 00:00:00', '已超期', '0');
+INSERT INTO `booklist` VALUES ('5', '5', '2014-09-01 00:00:00', '已被借', '0');
+INSERT INTO `booklist` VALUES ('6', '6', '2014-09-01 00:00:00', '未购买', '0');
+INSERT INTO `booklist` VALUES ('7', '7', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('8', '8', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('9', '9', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('10', '10', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('11', '11', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('12', '12', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('13', '13', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('14', '14', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('15', '15', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('16', '16', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('17', '17', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('18', '18', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('19', '19', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('20', '20', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('21', '21', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('22', '22', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('23', '23', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('24', '24', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('25', '25', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('26', '26', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('27', '27', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('28', '28', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('29', '29', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('30', '30', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('31', '31', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('32', '32', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('33', '33', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('34', '34', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('35', '35', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('36', '36', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('37', '37', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('38', '38', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('39', '39', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('40', '40', '2014-09-01 00:00:00', '已被借', '0');
+INSERT INTO `booklist` VALUES ('41', '41', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('42', '42', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('43', '43', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('44', '44', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('45', '45', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('46', '46', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('48', '48', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('49', '49', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('50', '50', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('51', '51', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('52', '52', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('53', '53', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('54', '54', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('55', '55', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('56', '56', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('57', '57', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('58', '58', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('59', '59', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('60', '60', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('61', '61', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('62', '62', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('63', '63', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('64', '64', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('65', '65', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('66', '66', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('67', '67', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('68', '68', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('69', '69', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('70', '70', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('71', '71', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('72', '72', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('73', '73', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('74', '74', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('75', '75', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('76', '76', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('77', '77', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('78', '78', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('79', '79', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('80', '80', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('81', '81', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('82', '82', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('83', '83', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('84', '84', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('85', '85', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('86', '86', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('87', '87', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('88', '88', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('89', '89', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('90', '90', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('91', '91', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('92', '92', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('93', '93', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('94', '94', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('95', '95', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('96', '96', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('97', '97', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('98', '98', '2014-09-01 00:00:00', '未被借', '0');
+INSERT INTO `booklist` VALUES ('99', '99', '2014-09-01 00:00:00', '未被借', '0');
 
 -- ----------------------------
 -- Table structure for `bookmessage`
@@ -333,7 +332,6 @@ CREATE TABLE `bookmessage` (
 -- ----------------------------
 -- Records of bookmessage
 -- ----------------------------
-INSERT INTO `bookmessage` VALUES ('1', '1', '1', '我看过这本', '2014-10-27', '0000-00-00');
 
 -- ----------------------------
 -- Table structure for `recommend`
@@ -354,7 +352,6 @@ CREATE TABLE `recommend` (
 -- ----------------------------
 -- Records of recommend
 -- ----------------------------
-INSERT INTO `recommend` VALUES ('1', '1', '1', '这书不错', '2014-10-26', '0000-00-00', '', '自选入库');
 
 -- ----------------------------
 -- Table structure for `user`

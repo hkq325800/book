@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50620
 File Encoding         : 65001
 
-Date: 2014-12-18 16:06:26
+Date: 2014-12-19 22:08:03
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -98,7 +98,7 @@ DROP TABLE IF EXISTS `booklist`;
 CREATE TABLE `booklist` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '清单编号',
   `book_kind` int(11) NOT NULL COMMENT '与类关联',
-  `book_time` date NOT NULL DEFAULT '0000-00-00' COMMENT '录入时间',
+  `book_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '录入时间',
   `book_status` varchar(255) NOT NULL DEFAULT '未被借' COMMENT '书本状态',
   `act_id` int(11) NOT NULL DEFAULT '0' COMMENT '活动相关',
   PRIMARY KEY (`id`)
