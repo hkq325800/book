@@ -419,7 +419,7 @@
 								'book_link'=>$res['book_link'],
 								'book_info'=>$res['book_info'],
 								'favour'=>$res['favour']);
-			$sql="SELECT DISTINCT li.id book_id, user_name, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at, book_status FROM booklist li LEFT JOIN bookcirculate cir ON cir.book_id = li.id LEFT JOIN `user` ON `user`.user_id = cir.user_id WHERE book_kind = '$bookKind' and updated_at = '0000-00-00 00:00:00' ORDER BY li.id";
+			$sql="SELECT DISTINCT li.id book_id,book_status, user_name, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at, book_status FROM booklist li LEFT JOIN bookcirculate cir ON cir.book_id = li.id LEFT JOIN `user` ON `user`.user_id = cir.user_id WHERE book_kind = '$bookKind' and updated_at = '0000-00-00 00:00:00' ORDER BY li.id";
 			//echo $sql."<br/>";
 			$query = mysql_query($sql);
 			if(!$query) {
