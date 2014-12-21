@@ -419,7 +419,7 @@
 								'book_link'=>$res['book_link'],
 								'book_info'=>$res['book_info'],
 								'favour'=>$res['favour']);
-			$sql="SELECT DISTINCT li.id book_id, user_name, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at, book_status FROM booklist li LEFT JOIN bookcirculate cir ON cir.book_id = li.id LEFT JOIN `user` ON `user`.user_id = cir.user_id WHERE book_kind = '$bookKind' and updated_at = '0000-00-00 00:00:00' ORDER BY li.id";
+			$sql="SELECT DISTINCT li.id book_id,book_status, user_name, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at, book_status FROM booklist li LEFT JOIN bookcirculate cir ON cir.book_id = li.id LEFT JOIN `user` ON `user`.user_id = cir.user_id WHERE book_kind = '$bookKind' and updated_at = '0000-00-00 00:00:00' ORDER BY li.id";
 			//echo $sql."<br/>";
 			$query = mysql_query($sql);
 			if(!$query) {
@@ -696,6 +696,7 @@
 	}
 	//向booklist中插入数据
 	function add_insert_booklist($bookIsbn){
+		sleep(1);
 		$buyTime = date("Y-m-d H:i:s");
 		$sql="INSERT booklist (book_kind, book_time) VALUE (( SELECT id FROM bookbasic WHERE book_isbn = '$bookIsbn' ),'$buyTime')";
 		$query = mysql_query($sql);
@@ -703,7 +704,7 @@
 		if(!$query){
 			error('sql_error');
 		}else{
-			$sql="insert bookcirculate (book_id,user_id,created_at) values (( SELECT id FROM booklist WHERE book_time = '$buyTime' ),'0','$buyTime')";
+			$sql="insert bookcirculate (book_id,book_kind,user_id,created_at) values (( SELECT li.id FROM booklist li ,bookbasic ba WHERE book_time = '$buyTime' and ba.id=li.book_kind and ba.book_isbn=$bookIsbn ),(SELECT li.book_kind FROM booklist li, bookbasic ba WHERE book_time = '$buyTime' and ba.id=li.book_kind and ba.book_isbn=$bookIsbn ),'0','$buyTime')";
 			$query = mysql_query($sql);
 			//echo $sql.'<br/>';
 			!$query?error('sql_error'):found();
