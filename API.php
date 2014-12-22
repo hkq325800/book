@@ -557,7 +557,7 @@
 		if($offset>=0){
 			$turn=" LIMIT $page_size OFFSET $offset ";
 		}
-		$sql="SELECT li.id AS book_id, book_name,book_author, CASE updated_at WHEN '0000-00-00 00:00:00' THEN '未还' ELSE '已还' END AS book_status, favour, book_pic, CASE ba.id IN ( SELECT book_kind FROM booklike WHERE user_id = '$userId' ) WHEN FALSE THEN '0' ELSE '1' END AS isLike, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li JOIN bookbasic ba ON li.book_kind = ba.id JOIN bookcirculate cir ON li.id = cir.book_id WHERE cir.user_id = '$userId' ORDER BY book_kind ";
+		$sql="SELECT li.id AS book_id, book_name,book_author, CASE updated_at WHEN '0000-00-00 00:00:00' THEN '未还' ELSE '已还' END AS book_status, favour, book_pic, CASE ba.id IN ( SELECT book_kind FROM booklike WHERE user_id = '$userId' ) WHEN FALSE THEN '0' ELSE '1' END AS isLike, created_at, datediff( date_add(created_at, INTERVAL 1 MONTH), now()) AS return_at FROM booklist li JOIN bookbasic ba ON li.book_kind = ba.id JOIN bookcirculate cir ON li.id = cir.book_id WHERE cir.user_id = '$userId' ORDER BY li.book_kind ";
 		$sql=$sql.$turn;
 		//echo $sql."<br/>";
 		sql2response_book_outline($sql,true);
