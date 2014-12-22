@@ -534,7 +534,7 @@
 		}
 		else {//bookcirculate插入借书记录
 			identity('bookcirculate','user_id','0','book_id',$bookId)?
-			$sql="update bookcirculate set user_id='$userId' , created_at='$updated_at' where book_id='$bookId'":
+			$sql="update bookcirculate set user_id='$userId' , created_at='$updated_at' where book_id='$bookId' and updated_at='0000-00-00 00:00:00'":
 			$sql="insert bookcirculate (book_id,user_id,created_at) values ('$bookId','$userId','$updated_at')";
 			$query = mysql_query($sql);
 			//echo $sql."<br/>";
