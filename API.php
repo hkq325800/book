@@ -17,7 +17,7 @@
 	**/
 	//test
 	$app->get('/',function(){//echo date("Y-m-d H:i:s"); 
-		echo '<div style="margin-left:550px;margin-top:200px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp欢迎光临<br>=><a href="http://www.baidu.com">www.我爱作死作作死.com</a>=<</div>';
+		echo '<div style="margin-left:550px;margin-top:200px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp欢迎光临<br>=><a href="http://www.flappyant.com/api/personalPro/public/">www.我爱作死作作死.com</a>=<</div>';
 	});
 	//test
 	$app->post('/',function(){
